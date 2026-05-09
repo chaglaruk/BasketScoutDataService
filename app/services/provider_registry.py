@@ -127,7 +127,7 @@ class ProviderRegistry:
     def _select_providers(self, names: list[str] | None) -> list[BaseProvider]:
         if names:
             return [self._providers[n] for n in names if n in self._providers]
-        
+
         # Priority order for default comparison
         priority_order = ["manual_import", "open_prices", "tesco", "mock"]
         selected = []
