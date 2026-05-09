@@ -40,11 +40,10 @@ class ProviderRegistry:
     def _build(self) -> None:
         """Tüm provider'ları başlatır."""
         candidates: list[BaseProvider] = [
-            MockProvider(),
             ManualImportProvider(),
-            OpenFoodFactsProvider(),
             OpenPricesProvider(),
             TescoProvider(),
+            OpenFoodFactsProvider(),
             AsdaProvider(),
             SainsburysProvider(),
             MorrisonsProvider(),
@@ -52,6 +51,7 @@ class ProviderRegistry:
             CoopProvider(),
             AldiProvider(),
             LidlProvider(),
+            MockProvider(),
         ]
         for p in candidates:
             try:
@@ -127,8 +127,14 @@ class ProviderRegistry:
     def _select_providers(self, names: list[str] | None) -> list[BaseProvider]:
         if names:
             return [self._providers[n] for n in names if n in self._providers]
-        # Varsayılan: yalnızca varsayılan provider
-        return [self.get_default()]
+        
+        # Priority order for default comparison
+        priority_order = ["manual_import", "open_prices", "tesco", "mock"]
+        selected = []
+        for name in priority_order:
+            if name in self._providers:
+                selected.append(self._providers[name])
+        return selected
 
 
 # Singleton

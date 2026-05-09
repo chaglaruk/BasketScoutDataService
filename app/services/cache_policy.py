@@ -53,6 +53,13 @@ def determine_data_mode(items: list[PriceItem]) -> str:
     if sources == {"mock"}:
         return "mock"
 
+    if "manual_import" in sources:
+        return "manual data"
+    if "open_prices" in sources:
+        return "open price data"
+    if "tesco" in sources:
+        return "Tesco limited"
+
     if True in stale_flags and False in stale_flags:
         return "mixed"
 

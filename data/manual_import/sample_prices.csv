@@ -11,3 +11,28 @@ Asda,asda,White Bread 800g,bread,Bakery,1.05,,true,SE13,,2026-05-08T12:00:00
 Sainsbury's,sainsburys,White Bread 800g,bread,Bakery,1.15,,true,SE13,,2026-05-08T12:00:00
 Aldi,aldi,White Bread 800g,bread,Bakery,0.89,,true,SE13,,2026-05-08T12:00:00
 Lidl,lidl,White Bread 800g,bread,Bakery,0.89,,true,SE13,,2026-05-08T12:00:00
+Tesco,tesco,Large Free Range Eggs x12,eggs,Dairy,2.50,,true,SE13,,2026-05-08T12:00:00
+Asda,asda,Large Free Range Eggs x12,eggs,Dairy,2.40,,true,SE13,,2026-05-08T12:00:00
+Sainsbury's,sainsburys,Large Free Range Eggs x12,eggs,Dairy,2.60,,true,SE13,,2026-05-08T12:00:00
+Aldi,aldi,Large Free Range Eggs x12,eggs,Dairy,2.19,,true,SE13,,2026-05-08T12:00:00
+Lidl,lidl,Large Free Range Eggs x12,eggs,Dairy,2.19,,true,SE13,,2026-05-08T12:00:00
+Tesco,tesco,Bananas x5,bananas,Produce,0.85,,true,SE13,,2026-05-08T12:00:00
+Asda,asda,Bananas x5,bananas,Produce,0.80,,true,SE13,,2026-05-08T12:00:00
+Aldi,aldi,Bananas x5,bananas,Produce,0.75,,true,SE13,,2026-05-08T12:00:00
+Lidl,lidl,Bananas x5,bananas,Produce,0.75,,true,SE13,,2026-05-08T12:00:00
+Tesco,tesco,Penne Pasta 500g,pasta,Pantry,0.75,,true,SE13,,2026-05-08T12:00:00
+Asda,asda,Penne Pasta 500g,pasta,Pantry,0.70,,true,SE13,,2026-05-08T12:00:00
+Aldi,aldi,Penne Pasta 500g,pasta,Pantry,0.65,,true,SE13,,2026-05-08T12:00:00
+Lidl,lidl,Penne Pasta 500g,pasta,Pantry,0.65,,true,SE13,,2026-05-08T12:00:00
+Tesco,tesco,Basmati Rice 1kg,rice,Pantry,1.85,,true,SE13,,2026-05-08T12:00:00
+Asda,asda,Basmati Rice 1kg,rice,Pantry,1.75,,true,SE13,,2026-05-08T12:00:00
+Aldi,aldi,Basmati Rice 1kg,rice,Pantry,1.55,,true,SE13,,2026-05-08T12:00:00
+Lidl,lidl,Basmati Rice 1kg,rice,Pantry,1.55,,true,SE13,,2026-05-08T12:00:00
+Tesco,tesco,Chicken Breast 650g,chicken breast,Meat,5.50,,true,SE13,,2026-05-08T12:00:00
+Asda,asda,Chicken Breast 650g,chicken breast,Meat,5.25,,true,SE13,,2026-05-08T12:00:00
+Aldi,aldi,Chicken Breast 650g,chicken breast,Meat,4.99,,true,SE13,,2026-05-08T12:00:00
+Lidl,lidl,Chicken Breast 650g,chicken breast,Meat,4.99,,true,SE13,,2026-05-08T12:00:00
+Tesco,tesco,Toilet Roll x9,toilet roll,Household,4.50,,true,SE13,,2026-05-08T12:00:00
+Asda,asda,Toilet Roll x9,toilet roll,Household,4.25,,true,SE13,,2026-05-08T12:00:00
+Aldi,aldi,Toilet Roll x9,toilet roll,Household,3.99,,true,SE13,,2026-05-08T12:00:00
+Lidl,lidl,Toilet Roll x9,toilet roll,Household,3.99,,true,SE13,,2026-05-08T12:00:00
