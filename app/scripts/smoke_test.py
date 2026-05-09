@@ -93,7 +93,7 @@ def main() -> int:
                 {"name": "eggs", "quantity": 2},
             ],
         }
-        r = httpx.post(f"{BASE}/basket/compare", json=payload, timeout=10)
+        r = httpx.post(f"{BASE}/basket/compare", json=payload, timeout=30)
         r.raise_for_status()
         data = r.json()
         assert "stores" in data

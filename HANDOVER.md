@@ -71,3 +71,6 @@ Backend diagnostics wording polished for users. Store details show formatted sou
 
 ## Milestone 28 Completed
 Implemented manual price management admin endpoints (/admin/manual-prices/*). Added provider priority visibility and Android diagnostics integration.
+
+## Milestone 29 Completed
+Hardened admin endpoints with optional ADMIN_TOKEN security (X-Admin-Token header). Added validation tests and documentation (ADMIN_SECURITY.md). Verified Android integration and fallback stability.

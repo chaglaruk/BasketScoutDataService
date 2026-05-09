@@ -2,16 +2,36 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi.security import APIKeyHeader
 from pydantic import BaseModel
 
+from app.core.config import get_settings
 from app.core.time import utcnow
 from app.domain.models import ManualImportSummary, ManualPriceImportItem
 from app.services.manual_import_service import ManualImportService
 from app.services.provider_registry import get_registry
 from app.services.refresh_service import RefreshService
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+header_scheme = APIKeyHeader(name="X-Admin-Token", auto_error=False)
+
+
+def check_admin_auth(token: str = Depends(header_scheme)):
+    settings = get_settings()
+    # Eğer admin_token ayarlanmışsa kontrol et
+    if settings.admin_token and (not token or token != settings.admin_token):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Geçersiz veya eksik admin token (X-Admin-Token header gerekli)."
+        )
+    return True
+
+
+router = APIRouter(
+    prefix="/admin",
+    tags=["admin"],
+    dependencies=[Depends(check_admin_auth)]
+)
 
 _refresh_service = RefreshService()
 _manual_service = ManualImportService()
