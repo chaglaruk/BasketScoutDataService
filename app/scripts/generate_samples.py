@@ -1,7 +1,9 @@
-from app.main import app
-from fastapi.testclient import TestClient
 import json
 import os
+
+from fastapi.testclient import TestClient
+
+from app.main import app
 
 client = TestClient(app)
 os.makedirs('artifacts/provider-samples', exist_ok=True)

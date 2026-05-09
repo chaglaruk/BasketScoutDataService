@@ -65,8 +65,9 @@ class TescoProvider(ScrapingBaseProvider):
         product_names: list[str],
         postcode: str | None = None,
     ) -> list[PriceItem]:
-        from bs4 import BeautifulSoup
         import re
+
+        from bs4 import BeautifulSoup
         results = []
         for name in product_names:
             try:
@@ -78,19 +79,19 @@ class TescoProvider(ScrapingBaseProvider):
                 )
                 if r.status_code == 200:
                     soup = BeautifulSoup(r.text, 'html.parser')
-                    
+
                     # 1. Product container'lar bulmaya calis (Tesco'nun genis listesi)
                     # Gercek sayfa yapisi srekli degistiginden, href'i urun iceren a etiketlerini veya fiyatlari ariyoruz
-                    
+
                     found_price = None
                     found_name = None
                     confidence = 0.3 # Default low confidence due to scraping heuristic
-                    
+
                     # Sayfadaki tum text'i kontrol edip hedeflenen urun var mi bakalim
                     text_lower = r.text.lower()
                     name_words = name.lower().split()
                     matches_name = all(w in text_lower for w in name_words)
-                    
+
                     if not matches_name:
                         logger.info(f"Tesco: '{name}' sayfa iceriginde bulunamadi.")
                         continue # Fail cleanly
@@ -108,7 +109,7 @@ class TescoProvider(ScrapingBaseProvider):
                         found_price = float(price_elements[0].replace('£', ''))
                         found_name = f"{name} (Tesco Arama Sonucu)"
                         confidence = 0.5 # A bit better, found a specific price element
-                        
+
                     if found_price is not None:
                         results.append(PriceItem(
                             retailer="Tesco",

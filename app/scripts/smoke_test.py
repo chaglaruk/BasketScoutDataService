@@ -63,7 +63,7 @@ def main() -> int:
         prices = data.get("items", [])
         assert isinstance(prices, list), "Expected list of PriceItem in items"
         assert len(prices) > 0, "Fiyat bulunamadi"
-        
+
         for p in prices:
             assert "source" in p, "Missing source field"
             assert "confidence" in p, "Missing confidence field"
@@ -72,7 +72,7 @@ def main() -> int:
             if p.get("source") == "mock":
                 assert p.get("available") is not False, "Mock data shouldn't have reliable stock"
             if p.get("source") != "mock" and p.get("retailer_slug") == "tesco" and p.get("confidence") == 1.0:
-                assert False, "Tesco regex probe should never have 1.0 confidence"
+                raise AssertionError("Tesco regex probe should never have 1.0 confidence")
 
         sources = [p.get("source", "unknown") for p in prices]
         types = [p.get("retailer_slug", "") for p in prices]
