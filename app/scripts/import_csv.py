@@ -44,8 +44,15 @@ def import_csv(file_stream: TextIO, target_path: Path) -> dict:
 
             valid_rows.append(row)
 
-        except ValueError as e:
-            errors.append(f"Satır {i}: {e}")
+        except ValueError as err:
+            errors.append(f"Satır {i}: {err}")
+
+    # Duplicate handling
+    deduped = {}
+    for r in valid_rows:
+        key = (r["retailer"], r["product_name"])
+        deduped[key] = r
+    final_rows = list(deduped.values())
 
     if errors:
         return {"success": False, "errors": errors, "imported": 0}
@@ -55,9 +62,9 @@ def import_csv(file_stream: TextIO, target_path: Path) -> dict:
     with open(target_path, "w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=reader.fieldnames)
         writer.writeheader()
-        writer.writerows(valid_rows)
+        writer.writerows(final_rows)
 
-    return {"success": True, "errors": [], "imported": len(valid_rows)}
+    return {"success": True, "errors": [], "imported": len(final_rows)}
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:

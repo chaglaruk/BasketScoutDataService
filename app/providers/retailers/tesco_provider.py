@@ -65,6 +65,7 @@ class TescoProvider(ScrapingBaseProvider):
         product_names: list[str],
         postcode: str | None = None,
     ) -> list[PriceItem]:
+        from bs4 import BeautifulSoup
         import re
         results = []
         for name in product_names:
@@ -72,30 +73,56 @@ class TescoProvider(ScrapingBaseProvider):
                 r = httpx.get(
                     f"https://www.tesco.com/shop/en-GB/search?query={name}",
                     headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
-                    timeout=5.0,
+                    timeout=10.0,
                     follow_redirects=True
                 )
                 if r.status_code == 200:
-                    # En basit HTML parsing: Fiyat içeren metinleri regex ile çıkar
-                    # Not: Bu güvenli "safe probe" olup, karmaşık JSON parsing içermez
-                    prices = re.findall(r'£(\d+\.\d{2})', r.text)
-                    if prices:
-                        # İlk bulduğumuz fiyatı (genelde ilk sonuç) alıyoruz
-                        # Gerçek üretim senaryosunda Playwright / JSON state parsing önerilir.
-                        price_val = float(prices[0])
+                    soup = BeautifulSoup(r.text, 'html.parser')
+                    
+                    # 1. Product container'lar bulmaya calis (Tesco'nun genis listesi)
+                    # Gercek sayfa yapisi srekli degistiginden, href'i urun iceren a etiketlerini veya fiyatlari ariyoruz
+                    
+                    found_price = None
+                    found_name = None
+                    confidence = 0.3 # Default low confidence due to scraping heuristic
+                    
+                    # Sayfadaki tum text'i kontrol edip hedeflenen urun var mi bakalim
+                    text_lower = r.text.lower()
+                    name_words = name.lower().split()
+                    matches_name = all(w in text_lower for w in name_words)
+                    
+                    if not matches_name:
+                        logger.info(f"Tesco: '{name}' sayfa iceriginde bulunamadi.")
+                        continue # Fail cleanly
+
+                    # Daha spesifik HTML aramasi (e.g., class'inda price gecen)
+                    price_elements = soup.find_all(string=re.compile(r'^£\d+\.\d{2}$'))
+                    if not price_elements:
+                        # Fallback to naive regex
+                        prices = re.findall(r'£(\d+\.\d{2})', r.text)
+                        if prices:
+                            found_price = float(prices[0])
+                            found_name = f"{name} (Tesco Tahmini)"
+                            confidence = 0.2 # Very low confidence, naive regex
+                    else:
+                        found_price = float(price_elements[0].replace('£', ''))
+                        found_name = f"{name} (Tesco Arama Sonucu)"
+                        confidence = 0.5 # A bit better, found a specific price element
+                        
+                    if found_price is not None:
                         results.append(PriceItem(
                             retailer="Tesco",
                             retailer_slug="tesco",
-                            product=name,
-                            price=price_val,
+                            product=found_name,
+                            price=found_price,
                             currency="GBP",
                             loyalty_price=None,
                             own_brand=False,
-                            available=True,
+                            available=None, # Mark stock as unknown since it's not reliable
                             source=self.name,
                             source_url=str(r.url),
                             last_checked_at=utcnow(),
-                            confidence=0.5, # Regex parsing is low confidence
+                            confidence=confidence, # Reduced confidence documented
                             is_stale=False,
                         ))
             except Exception as exc:

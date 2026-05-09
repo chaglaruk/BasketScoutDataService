@@ -1,0 +1,20 @@
+[
+  {
+    "retailer": "Tesco",
+    "retailer_slug": "tesco",
+    "product": "White Bread 800g",
+    "price": 1.1,
+    "currency": "GBP",
+    "unit_price": null,
+    "unit_price_unit": null,
+    "loyalty_price": null,
+    "own_brand": false,
+    "available": true,
+    "raw_availability_text": null,
+    "source": "mock",
+    "source_url": null,
+    "last_checked_at": "2026-05-09T00:31:00.485157Z",
+    "confidence": 1.0,
+    "is_stale": false
+  }
+]

@@ -20,4 +20,22 @@ def compare_basket(request: BasketCompareRequest) -> BasketCompareResponse:
     En ucuz ve kapsamayı karşılayan mağazayı önerir.
     Her satır için veri kaynağı, güven ve tazelik bilgisi döndürülür.
     """
-    return _service.compare(request)
+    response = _service.compare(request)
+    
+    # Metadata transparency
+    from app.services.provider_registry import get_registry
+    from app.core.time import utcnow
+    
+    registry = get_registry()
+    status_summary = {p.name: p.status().status for p in registry.all()}
+    
+    stale_or_low_confidence_count = 0
+    for store in response.stores:
+        for item in store.line_items:
+            if item.is_stale or (item.confidence is not None and item.confidence < 0.8):
+                stale_or_low_confidence_count += 1
+                
+    response.metadata.provider_status_summary = status_summary
+    response.metadata.stale_or_low_confidence_count = stale_or_low_confidence_count
+    
+    return response

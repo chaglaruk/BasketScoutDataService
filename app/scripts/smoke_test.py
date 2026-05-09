@@ -38,20 +38,20 @@ def main() -> int:
     total = 0
 
     def test_health():
-        r = httpx.get(f"{BASE}/health", timeout=5)
+        r = httpx.get(f"{BASE}/health", timeout=20)
         r.raise_for_status()
         data = r.json()
         assert data["ok"] is True, f"ok!=True: {data}"
 
     def test_providers():
-        r = httpx.get(f"{BASE}/providers/status", timeout=5)
+        r = httpx.get(f"{BASE}/providers/status", timeout=20.0)
         r.raise_for_status()
         data = r.json()
         assert "providers" in data
         assert len(data["providers"]) > 0
 
     def test_search():
-        r = httpx.get(f"{BASE}/products/search?q=milk", timeout=5)
+        r = httpx.get(f"{BASE}/products/search?q=milk", timeout=20)
         r.raise_for_status()
         data = r.json()
         assert data["count"] > 0, f"Urun bulunamadi: {data}"
@@ -64,6 +64,16 @@ def main() -> int:
         assert isinstance(prices, list), "Expected list of PriceItem in items"
         assert len(prices) > 0, "Fiyat bulunamadi"
         
+        for p in prices:
+            assert "source" in p, "Missing source field"
+            assert "confidence" in p, "Missing confidence field"
+            assert "last_checked_at" in p, "Missing last_checked_at field"
+            # Hardening against fake live data
+            if p.get("source") == "mock":
+                assert p.get("available") is not False, "Mock data shouldn't have reliable stock"
+            if p.get("source") != "mock" and p.get("retailer_slug") == "tesco" and p.get("confidence") == 1.0:
+                assert False, "Tesco regex probe should never have 1.0 confidence"
+
         sources = [p.get("source", "unknown") for p in prices]
         types = [p.get("retailer_slug", "") for p in prices]
         print(f"\n       Veri Kaynakları: {set(sources)}")

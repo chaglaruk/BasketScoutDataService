@@ -1,0 +1,339 @@
+{
+  "recommended": null,
+  "stores": [
+    {
+      "retailer": "Aldi",
+      "retailer_slug": "aldi",
+      "qualifies": false,
+      "total_price": 1.78,
+      "coverage": 0.5,
+      "matched_count": 1,
+      "missing_items": [
+        "milk"
+      ],
+      "line_items": [
+        {
+          "requested_name": "milk",
+          "canonical_name": null,
+          "quantity": 1,
+          "unit_price": null,
+          "line_total": null,
+          "available": null,
+          "source": null,
+          "source_url": null,
+          "last_checked_at": null,
+          "confidence": null,
+          "is_stale": false
+        },
+        {
+          "requested_name": "bread",
+          "canonical_name": "White Bread 800g",
+          "quantity": 2,
+          "unit_price": 0.89,
+          "line_total": 1.78,
+          "available": true,
+          "source": "mock",
+          "source_url": null,
+          "last_checked_at": "2026-05-09T00:31:00.493494Z",
+          "confidence": 1.0,
+          "is_stale": false
+        }
+      ]
+    },
+    {
+      "retailer": "Lidl",
+      "retailer_slug": "lidl",
+      "qualifies": false,
+      "total_price": 1.78,
+      "coverage": 0.5,
+      "matched_count": 1,
+      "missing_items": [
+        "milk"
+      ],
+      "line_items": [
+        {
+          "requested_name": "milk",
+          "canonical_name": null,
+          "quantity": 1,
+          "unit_price": null,
+          "line_total": null,
+          "available": null,
+          "source": null,
+          "source_url": null,
+          "last_checked_at": null,
+          "confidence": null,
+          "is_stale": false
+        },
+        {
+          "requested_name": "bread",
+          "canonical_name": "White Bread 800g",
+          "quantity": 2,
+          "unit_price": 0.89,
+          "line_total": 1.78,
+          "available": true,
+          "source": "mock",
+          "source_url": null,
+          "last_checked_at": "2026-05-09T00:31:00.493494Z",
+          "confidence": 1.0,
+          "is_stale": false
+        }
+      ]
+    },
+    {
+      "retailer": "Asda",
+      "retailer_slug": "asda",
+      "qualifies": false,
+      "total_price": 2.1,
+      "coverage": 0.5,
+      "matched_count": 1,
+      "missing_items": [
+        "milk"
+      ],
+      "line_items": [
+        {
+          "requested_name": "milk",
+          "canonical_name": null,
+          "quantity": 1,
+          "unit_price": null,
+          "line_total": null,
+          "available": null,
+          "source": null,
+          "source_url": null,
+          "last_checked_at": null,
+          "confidence": null,
+          "is_stale": false
+        },
+        {
+          "requested_name": "bread",
+          "canonical_name": "White Bread 800g",
+          "quantity": 2,
+          "unit_price": 1.05,
+          "line_total": 2.1,
+          "available": true,
+          "source": "mock",
+          "source_url": null,
+          "last_checked_at": "2026-05-09T00:31:00.493494Z",
+          "confidence": 1.0,
+          "is_stale": false
+        }
+      ]
+    },
+    {
+      "retailer": "Morrisons",
+      "retailer_slug": "morrisons",
+      "qualifies": false,
+      "total_price": 2.2,
+      "coverage": 0.5,
+      "matched_count": 1,
+      "missing_items": [
+        "milk"
+      ],
+      "line_items": [
+        {
+          "requested_name": "milk",
+          "canonical_name": null,
+          "quantity": 1,
+          "unit_price": null,
+          "line_total": null,
+          "available": null,
+          "source": null,
+          "source_url": null,
+          "last_checked_at": null,
+          "confidence": null,
+          "is_stale": false
+        },
+        {
+          "requested_name": "bread",
+          "canonical_name": "White Bread 800g",
+          "quantity": 2,
+          "unit_price": 1.1,
+          "line_total": 2.2,
+          "available": true,
+          "source": "mock",
+          "source_url": null,
+          "last_checked_at": "2026-05-09T00:31:00.493494Z",
+          "confidence": 1.0,
+          "is_stale": false
+        }
+      ]
+    },
+    {
+      "retailer": "Tesco",
+      "retailer_slug": "tesco",
+      "qualifies": false,
+      "total_price": 2.2,
+      "coverage": 0.5,
+      "matched_count": 1,
+      "missing_items": [
+        "milk"
+      ],
+      "line_items": [
+        {
+          "requested_name": "milk",
+          "canonical_name": null,
+          "quantity": 1,
+          "unit_price": null,
+          "line_total": null,
+          "available": null,
+          "source": null,
+          "source_url": null,
+          "last_checked_at": null,
+          "confidence": null,
+          "is_stale": false
+        },
+        {
+          "requested_name": "bread",
+          "canonical_name": "White Bread 800g",
+          "quantity": 2,
+          "unit_price": 1.1,
+          "line_total": 2.2,
+          "available": true,
+          "source": "mock",
+          "source_url": null,
+          "last_checked_at": "2026-05-09T00:31:00.493494Z",
+          "confidence": 1.0,
+          "is_stale": false
+        }
+      ]
+    },
+    {
+      "retailer": "Sainsbury's",
+      "retailer_slug": "sainsburys",
+      "qualifies": false,
+      "total_price": 2.3,
+      "coverage": 0.5,
+      "matched_count": 1,
+      "missing_items": [
+        "milk"
+      ],
+      "line_items": [
+        {
+          "requested_name": "milk",
+          "canonical_name": null,
+          "quantity": 1,
+          "unit_price": null,
+          "line_total": null,
+          "available": null,
+          "source": null,
+          "source_url": null,
+          "last_checked_at": null,
+          "confidence": null,
+          "is_stale": false
+        },
+        {
+          "requested_name": "bread",
+          "canonical_name": "White Bread 800g",
+          "quantity": 2,
+          "unit_price": 1.15,
+          "line_total": 2.3,
+          "available": true,
+          "source": "mock",
+          "source_url": null,
+          "last_checked_at": "2026-05-09T00:31:00.493494Z",
+          "confidence": 1.0,
+          "is_stale": false
+        }
+      ]
+    },
+    {
+      "retailer": "Co-op",
+      "retailer_slug": "coop",
+      "qualifies": false,
+      "total_price": 2.4,
+      "coverage": 0.5,
+      "matched_count": 1,
+      "missing_items": [
+        "milk"
+      ],
+      "line_items": [
+        {
+          "requested_name": "milk",
+          "canonical_name": null,
+          "quantity": 1,
+          "unit_price": null,
+          "line_total": null,
+          "available": null,
+          "source": null,
+          "source_url": null,
+          "last_checked_at": null,
+          "confidence": null,
+          "is_stale": false
+        },
+        {
+          "requested_name": "bread",
+          "canonical_name": "White Bread 800g",
+          "quantity": 2,
+          "unit_price": 1.2,
+          "line_total": 2.4,
+          "available": true,
+          "source": "mock",
+          "source_url": null,
+          "last_checked_at": "2026-05-09T00:31:00.493494Z",
+          "confidence": 1.0,
+          "is_stale": false
+        }
+      ]
+    },
+    {
+      "retailer": "Waitrose",
+      "retailer_slug": "waitrose",
+      "qualifies": false,
+      "total_price": 2.8,
+      "coverage": 0.5,
+      "matched_count": 1,
+      "missing_items": [
+        "milk"
+      ],
+      "line_items": [
+        {
+          "requested_name": "milk",
+          "canonical_name": null,
+          "quantity": 1,
+          "unit_price": null,
+          "line_total": null,
+          "available": null,
+          "source": null,
+          "source_url": null,
+          "last_checked_at": null,
+          "confidence": null,
+          "is_stale": false
+        },
+        {
+          "requested_name": "bread",
+          "canonical_name": "White Bread 800g",
+          "quantity": 2,
+          "unit_price": 1.4,
+          "line_total": 2.8,
+          "available": true,
+          "source": "mock",
+          "source_url": null,
+          "last_checked_at": "2026-05-09T00:31:00.493494Z",
+          "confidence": 1.0,
+          "is_stale": false
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "data_mode": "mock",
+    "generated_at": "2026-05-09T00:31:00.495319Z",
+    "warnings": [
+      "Hi\u00e7bir ma\u011faza kapsama e\u015fi\u011fini kar\u015f\u0131lamad\u0131. En yak\u0131n sonu\u00e7lar g\u00f6steriliyor."
+    ],
+    "provider_status_summary": {
+      "mock": "ok",
+      "manual_import": "ok",
+      "open_food_facts": "ok",
+      "open_prices": "ok",
+      "tesco": "ok",
+      "asda": "limited",
+      "sainsburys": "limited",
+      "morrisons": "limited",
+      "waitrose": "limited",
+      "coop": "limited",
+      "aldi": "limited",
+      "lidl": "limited"
+    },
+    "stale_or_low_confidence_count": 0
+  }
+}

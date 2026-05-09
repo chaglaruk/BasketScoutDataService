@@ -1,0 +1,200 @@
+{
+  "providers": [
+    {
+      "name": "mock",
+      "status": "ok",
+      "type": "mock",
+      "last_run_at": "2026-05-09T00:31:00.705667Z",
+      "message": "Mock provider aktif \u2014 demo veri sunuluyor.",
+      "limitations": [
+        "Demo verisi \u2014 ger\u00e7ek fiyatlar\u0131 yans\u0131tmaz.",
+        "Fiyatlar ger\u00e7ek zamanl\u0131 de\u011fil, statik referans de\u011ferleridir.",
+        "Canl\u0131 promosyonlar dahil de\u011fil."
+      ],
+      "supports_live_prices": false,
+      "supports_stock": true,
+      "confidence_score": null,
+      "requires_postcode": false
+    },
+    {
+      "name": "manual_import",
+      "status": "ok",
+      "type": "manual",
+      "last_run_at": "2026-05-09T00:31:00.705734Z",
+      "message": "12 fiyat kayd\u0131 y\u00fcklendi.",
+      "limitations": [
+        "Veri kayna\u011f\u0131 CSV dosyas\u0131d\u0131r \u2014 ger\u00e7ek zamanl\u0131 de\u011fil.",
+        "CSV yolu: data\\manual_import\\sample_prices.csv",
+        "Verinin do\u011frulu\u011fu ve g\u00fcncelli\u011fi dosyay\u0131 g\u00fcncelleyen ki\u015fiye ba\u011fl\u0131d\u0131r."
+      ],
+      "supports_live_prices": false,
+      "supports_stock": false,
+      "confidence_score": null,
+      "requires_postcode": false
+    },
+    {
+      "name": "open_food_facts",
+      "status": "ok",
+      "type": "open_data",
+      "last_run_at": "2026-05-09T00:31:00.705756Z",
+      "message": "Open Food Facts hazir. Urun meta verisi saglar (fiyat yok).",
+      "limitations": [
+        "Fiyat verisi yoktur \u2014 yaln\u0131zca \u00fcr\u00fcn meta verisi.",
+        "Stok bilgisi yoktur.",
+        "Kitlesel kaynakl\u0131 veri \u2014 do\u011fruluk garantisi yok.",
+        "\u0130nternet ba\u011flant\u0131s\u0131 gerektirir.",
+        "Rate limiting uygulan\u0131r \u2014 a\u015f\u0131r\u0131 sorgu yapmay\u0131n."
+      ],
+      "supports_live_prices": false,
+      "supports_stock": false,
+      "confidence_score": null,
+      "requires_postcode": false
+    },
+    {
+      "name": "open_prices",
+      "status": "ok",
+      "type": "open_data",
+      "last_run_at": "2026-05-09T00:31:00.816600Z",
+      "message": "Open Prices API eri\u015filebilir.",
+      "limitations": [
+        "Kitlesel kaynakl\u0131 veri \u2014 resmi fiyat garantisi yok.",
+        "G\u00fcven skoru maksimum 0.6 ile s\u0131n\u0131rl\u0131d\u0131r.",
+        "\u0130ngiltere kapsam\u0131 s\u0131n\u0131rl\u0131d\u0131r.",
+        "Stok bilgisi sunmaz.",
+        "\u0130nternet ba\u011flant\u0131s\u0131 gerektirir."
+      ],
+      "supports_live_prices": true,
+      "supports_stock": false,
+      "confidence_score": null,
+      "requires_postcode": false
+    },
+    {
+      "name": "tesco",
+      "status": "ok",
+      "type": "scraping",
+      "last_run_at": "2026-05-09T00:31:00.816645Z",
+      "message": "Tesco arama sayfas\u0131 eri\u015filebilir ve Regex probe kullan\u0131l\u0131yor.",
+      "limitations": [
+        "Resmi API yoktur.",
+        "A\u015f\u0131r\u0131 istekte IP bloklamas\u0131 olabilir (Bot korumas\u0131).",
+        "G\u00fcvenli limitli probe \u00e7al\u0131\u015ft\u0131r\u0131l\u0131yor."
+      ],
+      "supports_live_prices": true,
+      "supports_stock": false,
+      "confidence_score": null,
+      "requires_postcode": false
+    },
+    {
+      "name": "asda",
+      "status": "limited",
+      "type": "scraping",
+      "last_run_at": "2026-05-09T00:31:00.816657Z",
+      "message": "Asda statik HTTP ile eri\u00c5\u0178ilemiyor. Bot korumaya sayg\u00c4\u00b1 g\u00c3\u00b6steriliyor.",
+      "limitations": [
+        "Asda arama sayfas\u00c4\u00b1 JavaScript ile render edilir ve bot koruma sistemine sahiptir.",
+        "Bot koruma sistemi aktif \u00e2\u20ac\u201d bypass yap\u00c4\u00b1lmayacak.",
+        "Giri\u00c5\u0178 veya captcha gerektiren sayfalara eri\u00c5\u0178ilmeyecek."
+      ],
+      "supports_live_prices": false,
+      "supports_stock": false,
+      "confidence_score": null,
+      "requires_postcode": false
+    },
+    {
+      "name": "sainsburys",
+      "status": "limited",
+      "type": "scraping",
+      "last_run_at": "2026-05-09T00:31:00.816665Z",
+      "message": "Sainsbury's statik HTTP ile eri\u00c5\u0178ilemiyor. Bot korumaya sayg\u00c4\u00b1 g\u00c3\u00b6steriliyor.",
+      "limitations": [
+        "Sainsbury's \u00c3\u00bcr\u00c3\u00bcn arama API'si herkese a\u00c3\u00a7\u00c4\u00b1k de\u00c4\u0178il; statik HTML eri\u00c5\u0178imi k\u00c4\u00b1s\u00c4\u00b1tl\u00c4\u00b1d\u00c4\u00b1r.",
+        "Bot koruma sistemi aktif \u00e2\u20ac\u201d bypass yap\u00c4\u00b1lmayacak.",
+        "Giri\u00c5\u0178 veya captcha gerektiren sayfalara eri\u00c5\u0178ilmeyecek."
+      ],
+      "supports_live_prices": false,
+      "supports_stock": false,
+      "confidence_score": null,
+      "requires_postcode": false
+    },
+    {
+      "name": "morrisons",
+      "status": "limited",
+      "type": "scraping",
+      "last_run_at": "2026-05-09T00:31:00.816671Z",
+      "message": "Morrisons statik HTTP ile eri\u00c5\u0178ilemiyor. Bot korumaya sayg\u00c4\u00b1 g\u00c3\u00b6steriliyor.",
+      "limitations": [
+        "Morrisons arama sayfas\u00c4\u00b1 JavaScript render ve bot koruma gerektirir.",
+        "Bot koruma sistemi aktif \u00e2\u20ac\u201d bypass yap\u00c4\u00b1lmayacak.",
+        "Giri\u00c5\u0178 veya captcha gerektiren sayfalara eri\u00c5\u0178ilmeyecek."
+      ],
+      "supports_live_prices": false,
+      "supports_stock": false,
+      "confidence_score": null,
+      "requires_postcode": false
+    },
+    {
+      "name": "waitrose",
+      "status": "limited",
+      "type": "scraping",
+      "last_run_at": "2026-05-09T00:31:00.816678Z",
+      "message": "Waitrose statik HTTP ile eri\u00c5\u0178ilemiyor. Bot korumaya sayg\u00c4\u00b1 g\u00c3\u00b6steriliyor.",
+      "limitations": [
+        "Waitrose \u00c3\u00bcr\u00c3\u00bcn sayfalar\u00c4\u00b1 JavaScript ile y\u00c3\u00bcklenir; statik HTTP yetersiz kal\u00c4\u00b1r.",
+        "Bot koruma sistemi aktif \u00e2\u20ac\u201d bypass yap\u00c4\u00b1lmayacak.",
+        "Giri\u00c5\u0178 veya captcha gerektiren sayfalara eri\u00c5\u0178ilmeyecek."
+      ],
+      "supports_live_prices": false,
+      "supports_stock": false,
+      "confidence_score": null,
+      "requires_postcode": false
+    },
+    {
+      "name": "coop",
+      "status": "limited",
+      "type": "scraping",
+      "last_run_at": "2026-05-09T00:31:00.816684Z",
+      "message": "Co-op statik HTTP ile eri\u00c5\u0178ilemiyor. Bot korumaya sayg\u00c4\u00b1 g\u00c3\u00b6steriliyor.",
+      "limitations": [
+        "Co-op online ma\u00c4\u0178aza statik HTTP ile eri\u00c5\u0178ilebilir de\u00c4\u0178il; Playwright gerektirir.",
+        "Bot koruma sistemi aktif \u00e2\u20ac\u201d bypass yap\u00c4\u00b1lmayacak.",
+        "Giri\u00c5\u0178 veya captcha gerektiren sayfalara eri\u00c5\u0178ilmeyecek."
+      ],
+      "supports_live_prices": false,
+      "supports_stock": false,
+      "confidence_score": null,
+      "requires_postcode": false
+    },
+    {
+      "name": "aldi",
+      "status": "limited",
+      "type": "scraping",
+      "last_run_at": "2026-05-09T00:31:00.816689Z",
+      "message": "Aldi statik HTTP ile eri\u00c5\u0178ilemiyor. Bot korumaya sayg\u00c4\u00b1 g\u00c3\u00b6steriliyor.",
+      "limitations": [
+        "Aldi UK \u00c3\u00bcr\u00c3\u00bcn sayfalar\u00c4\u00b1 dinamik render; eri\u00c5\u0178im bot koruma ile s\u00c4\u00b1n\u00c4\u00b1rl\u00c4\u00b1d\u00c4\u00b1r.",
+        "Bot koruma sistemi aktif \u00e2\u20ac\u201d bypass yap\u00c4\u00b1lmayacak.",
+        "Giri\u00c5\u0178 veya captcha gerektiren sayfalara eri\u00c5\u0178ilmeyecek."
+      ],
+      "supports_live_prices": false,
+      "supports_stock": false,
+      "confidence_score": null,
+      "requires_postcode": false
+    },
+    {
+      "name": "lidl",
+      "status": "limited",
+      "type": "scraping",
+      "last_run_at": "2026-05-09T00:31:00.816696Z",
+      "message": "Lidl statik HTTP ile eri\u00c5\u0178ilemiyor. Bot korumaya sayg\u00c4\u00b1 g\u00c3\u00b6steriliyor.",
+      "limitations": [
+        "Lidl GB \u00c3\u00bcr\u00c3\u00bcn arama JavaScript ile \u00c3\u00a7al\u00c4\u00b1\u00c5\u0178\u00c4\u00b1r; statik HTTP yetersizdir.",
+        "Bot koruma sistemi aktif \u00e2\u20ac\u201d bypass yap\u00c4\u00b1lmayacak.",
+        "Giri\u00c5\u0178 veya captcha gerektiren sayfalara eri\u00c5\u0178ilmeyecek."
+      ],
+      "supports_live_prices": false,
+      "supports_stock": false,
+      "confidence_score": null,
+      "requires_postcode": false
+    }
+  ]
+}

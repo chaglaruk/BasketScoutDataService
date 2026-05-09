@@ -37,6 +37,7 @@ Milestone: Tam Kurulum ve Son Audit
 | 7 — Yerel Dev El Teslimi | ✅ | scripts/dev.ps1, test.ps1, vb. |
 | 8 — Final QA & Audit | ✅ | GitHub entegrasyonu, smoke test, linting |
 | 9 — Real-data capability | ✅ | OpenPrices, Manuel Import scripti, Tesco safe probe |
+| 10 — QA & Provider Hardening | ✅ | Safe probe kalitesi, sepet şeffaflığı, artifact'ler |
 
 ## Provider Özeti ve Veri Doğruluğu (Real vs Mock)
 

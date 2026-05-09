@@ -93,6 +93,8 @@ class BasketCompareMetadata(BaseModel):
     data_mode: str  # mock | live | cache | mixed
     generated_at: datetime
     warnings: list[str] = Field(default_factory=list)
+    provider_status_summary: dict[str, str] = Field(default_factory=dict)
+    stale_or_low_confidence_count: int = Field(default=0)
 
 
 class BasketCompareResponse(BaseModel):
