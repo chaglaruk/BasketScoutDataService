@@ -40,5 +40,7 @@ def test_retailer_providers_limited():
                       "waitrose", "coop", "aldi", "lidl"}
     for p in data["providers"]:
         if p["name"] in retailer_slugs:
-            # Tüm scraping provider'lar LIMITED veya BLOCKED olmalı
-            assert p["status"] in ("limited", "blocked", "error")
+            if p["name"] == "tesco":
+                assert p["status"] in ("ok", "limited", "blocked", "error")
+            else:
+                assert p["status"] in ("limited", "blocked", "error")

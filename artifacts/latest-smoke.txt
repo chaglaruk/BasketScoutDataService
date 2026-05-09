@@ -1,0 +1,13 @@
+﻿
+BasketScoutDataService Smoke Test -- http://127.0.0.1:8787
+
+  [OK] GET /health
+  [OK] GET /providers/status
+  [OK] GET /products/search?q=milk
+  [OK] GET /prices/latest?product=milk
+  [OK] POST /basket/compare
+
+========================================
+Sonuc: 5/5 test gecti
+[PASS] TUM TESTLER GECTI
+

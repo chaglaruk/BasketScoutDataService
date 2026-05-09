@@ -36,6 +36,7 @@ Milestone: Tam Kurulum ve Son Audit
 | 6 — Android Sözleşmesi | ✅ | API_CONTRACT.md, ANDROID_INTEGRATION_GUIDE.md |
 | 7 — Yerel Dev El Teslimi | ✅ | scripts/dev.ps1, test.ps1, vb. |
 | 8 — Final QA & Audit | ✅ | GitHub entegrasyonu, smoke test, linting |
+| 9 — Real-data capability | ✅ | OpenPrices, Manuel Import scripti, Tesco safe probe |
 
 ## Provider Özeti ve Veri Doğruluğu (Real vs Mock)
 

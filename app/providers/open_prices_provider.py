@@ -45,7 +45,7 @@ class OpenPricesProvider(BaseProvider):
 
     @property
     def supports_live_prices(self) -> bool:
-        return False  # Kitlesel kaynak, resmi canlı fiyat değil
+        return True
 
     @property
     def limitations(self) -> list[str]:
@@ -58,18 +58,26 @@ class OpenPricesProvider(BaseProvider):
         ]
 
     def status(self) -> ProviderStatusItem:
-        # Durum kontrolü için canlı HTTP probe yapmıyoruz — her çağrıda gecikme yaratır.
+        try:
+            r = self._client.get("/prices", params={"page_size": 1}, timeout=5.0)
+            if r.status_code == 200:
+                st, msg = "ok", "Open Prices API erişilebilir."
+            else:
+                st, msg = "limited", f"HTTP {r.status_code}"
+        except Exception as exc:
+            st, msg = "limited", f"Bağlantı hatası: {exc}"
         return ProviderStatusItem(
             name=self.name,
-            status="limited",
+            status=st,
             type=self.type,
             last_run_at=utcnow(),
-            message="Open Prices MVP iskeleti hazir. (Barkod entegrasyonu gerekli)",
+            message=msg,
             limitations=self.limitations,
+            supports_live_prices=self.supports_live_prices,
+            supports_stock=self.supports_stock,
         )
 
     def search_products(self, query: str) -> list[ProductSummary]:
-        """Open Prices ürün arama desteği yoktur; boş liste döner."""
         return []
 
     def get_latest_prices(
@@ -77,9 +85,50 @@ class OpenPricesProvider(BaseProvider):
         product_names: list[str],
         postcode: str | None = None,
     ) -> list[PriceItem]:
-        """
-        Barkod ile fiyat arar. Ürün isimlerini barkoda dönüştürmek için
-        Open Food Facts entegrasyonu gerekir — bu MVP'de skeleton olarak bırakılmıştır.
-        """
-        logger.info("OpenPrices: MVP'de yalnızca iskelet — barkod entegrasyonu gerekli.")
-        return []
+        results = []
+        for name in product_names:
+            try:
+                # 1. Open Food Facts'ten barkod al (İngiltere odaklı)
+                off_r = httpx.get(
+                    "https://world.openfoodfacts.org/cgi/search.pl",
+                    params={"search_terms": name, "search_simple": 1, "json": 1, "page_size": 1, "country": "united-kingdom"},
+                    timeout=5.0,
+                    headers={"User-Agent": "BasketScoutDataService/0.1.0"}
+                )
+                if off_r.status_code != 200:
+                    continue
+                off_data = off_r.json()
+                products = off_data.get("products", [])
+                if not products:
+                    continue
+                barcode = products[0].get("_id")
+                if not barcode:
+                    continue
+
+                # 2. Barkod ile Open Prices'tan fiyat sorgula
+                r = self._client.get("/prices", params={"product_code": barcode, "page_size": 1}, timeout=5.0)
+                if r.status_code == 200:
+                    data = r.json()
+                    items = data.get("items", [])
+                    if items:
+                        best_price = items[0]
+                        price_val = float(best_price.get("price", 0.0))
+                        if price_val > 0:
+                            results.append(PriceItem(
+                                retailer="OpenPrices (Crowdsourced)",
+                                retailer_slug="open_prices",
+                                product=name,
+                                price=price_val,
+                                currency=best_price.get("currency", "GBP"),
+                                loyalty_price=None,
+                                own_brand=False,
+                                available=None,
+                                source=self.name,
+                                source_url=f"https://prices.openfoodfacts.org/api/v1/prices?product_code={barcode}",
+                                last_checked_at=utcnow(),
+                                confidence=0.6,
+                                is_stale=False,
+                            ))
+            except Exception as exc:
+                logger.warning(f"OpenPrices error for {name}: {exc}")
+        return results

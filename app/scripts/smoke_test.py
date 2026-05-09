@@ -57,10 +57,19 @@ def main() -> int:
         assert data["count"] > 0, f"Urun bulunamadi: {data}"
 
     def test_prices():
-        r = httpx.get(f"{BASE}/prices/latest?product=milk", timeout=5)
+        r = httpx.get(f"{BASE}/prices/latest?product=milk", timeout=20.0)
         r.raise_for_status()
         data = r.json()
-        assert data["count"] > 0, f"Fiyat bulunamadi: {data}"
+        prices = data.get("items", [])
+        assert isinstance(prices, list), "Expected list of PriceItem in items"
+        assert len(prices) > 0, "Fiyat bulunamadi"
+        
+        sources = [p.get("source", "unknown") for p in prices]
+        types = [p.get("retailer_slug", "") for p in prices]
+        print(f"\n       Veri Kaynakları: {set(sources)}")
+        print(f"       Kullanılan Sağlayıcılar: {set(types)}")
+        if all("mock" in t or "manual" in t for t in types):
+             print("       Not: Sadece mock veya manual veriler dönüyor, canlı market fiyatı YOK.")
 
     def test_basket():
         payload = {

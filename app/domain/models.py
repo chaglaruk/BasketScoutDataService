@@ -105,12 +105,13 @@ class BasketCompareResponse(BaseModel):
 
 
 class ProviderStatusItem(BaseModel):
-    name: str
-    status: str  # ok | limited | blocked | unknown | error
-    type: str  # mock | manual | open_data | scraping
-    last_run_at: datetime | None = None
-    message: str | None = None
-    limitations: list[str] = Field(default_factory=list)
-    supports_live_prices: bool = False
-    supports_stock: bool = False
+    name: str = Field(description="Provider id (ör. tesco)")
+    status: str = Field(description="Durum: ok, limited, blocked")
+    type: str = Field(description="Tip: mock, manual, open_data, scraping")
+    last_run_at: datetime | None = Field(None, description="Son çalışma/probe zamanı")
+    message: str | None = Field(None, description="Hata veya durum mesajı")
+    limitations: list[str] = Field(default_factory=list, description="Kısıtlamalar listesi")
+    supports_live_prices: bool = Field(default=False, description="Canlı fiyat sorgulamayı destekler mi")
+    supports_stock: bool = Field(default=False, description="Canlı stok sorgulamayı destekler mi")
+    confidence_score: float | None = Field(default=None, description="Fiyatların güvenilirlik skoru")
     requires_postcode: bool = False
