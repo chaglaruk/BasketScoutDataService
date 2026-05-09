@@ -30,6 +30,16 @@ async def lifespan(app: FastAPI):
     logger.info(
         f"BasketScoutDataService başlatılıyor — v{settings.app_version} / {settings.app_env}"
     )
+    if settings.is_production and not settings.admin_token:
+        logger.warning(
+            "Production mode with empty ADMIN_TOKEN detected. "
+            "Admin endpoints will reject requests until ADMIN_TOKEN is configured."
+        )
+    if settings.is_production and "*" in settings.cors_allowed_origins_list:
+        logger.warning(
+            "CORS_ALLOWED_ORIGINS contains wildcard '*' in production. "
+            "Use explicit origins for safer deployment."
+        )
     # Veritabanını başlat
     try:
         from app.db.database import init_db
@@ -68,12 +78,13 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # CORS — Android uygulaması için
+    # CORS - explicit allow-list from settings.
+    allow_origins = settings.cors_allowed_origins_list
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=allow_origins,
         allow_credentials=False,
-        allow_methods=["GET", "POST"],
+        allow_methods=["GET", "POST", "OPTIONS"],
         allow_headers=["*"],
     )
 

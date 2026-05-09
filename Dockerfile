@@ -7,8 +7,10 @@ LABEL description="BasketScoutDataService — FastAPI backend"
 # Ortam değişkenleri
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    APP_HOST=0.0.0.0 \
-    APP_PORT=8787
+    HOST=0.0.0.0 \
+    PORT=8787 \
+    ENV=production \
+    DEBUG=false
 
 WORKDIR /app
 
@@ -31,4 +33,4 @@ EXPOSE 8787
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD python -c "import httpx; r=httpx.get('http://localhost:8787/health'); assert r.json()['ok']"
 
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8787"]
+CMD ["sh", "-c", "python -m uvicorn app.main:app --host ${HOST:-0.0.0.0} --port ${PORT:-8787}"]

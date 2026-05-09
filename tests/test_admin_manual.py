@@ -70,3 +70,12 @@ def test_import_manual_prices_invalid_data():
     response = client.post("/admin/manual-prices/import", json=payload)
     # Price "bedava" olduğunda 422 Unprocessable Entity döner (Pydantic validation)
     assert response.status_code == 422
+
+
+def test_admin_requires_token_in_production(monkeypatch):
+    monkeypatch.setattr(get_settings(), "app_env", "production")
+    monkeypatch.setattr(get_settings(), "admin_token", None)
+    monkeypatch.setattr(get_settings(), "require_admin_token_in_production", True)
+
+    response = client.get("/admin/manual-prices")
+    assert response.status_code == 503

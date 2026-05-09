@@ -77,3 +77,6 @@ Hardened admin endpoints with optional ADMIN_TOKEN security (X-Admin-Token heade
 
 ## Milestone 30 Completed
 Hardened config parsing for `DEBUG` env collisions. Backend now safely maps `DEBUG=release|prod|production` to `False` and `DEBUG=development|dev` to `True`, preventing test/startup failures from global environment variables. Added regression tests in `tests/test_config.py`.
+
+## Milestone 30 - Deployment Readiness Completed
+Prepared backend for remote deployment without locking to a hosting provider. Added production-safe config aliases (`HOST/PORT/ENV`), DB fallback (`DATABASE_URL` or `SQLITE_PATH`), configurable CORS allow-list, production admin-token enforcement behavior for `/admin/*`, deployment guide (`DEPLOYMENT_GUIDE.md`), and `scripts/prod_smoke.ps1` for production-style validation.

@@ -2,7 +2,7 @@
 
 BasketScoutDataService, manuel fiyat içe aktarma ve veri yenileme gibi kritik işlemler için yönetici endpoint'leri sunar. Bu endpoint'lerin güvenliği için şu yöntemler kullanılabilir:
 
-## 1. Token Tabanlı Güvenlik (Önerilen)
+## 1. Token Tabanlı Güvenlik (Önerilen ve Production için Zorunlu)
 
 `.env` dosyasında `ADMIN_TOKEN` değişkenini tanımlayarak endpoint'leri korumaya alabilirsiniz.
 
@@ -21,9 +21,16 @@ curl -X GET http://127.0.0.1:8787/admin/manual-prices \
 
 Eğer token yanlışsa veya eksikse `401 Unauthorized` hatası döndürülür.
 
+## 1.1 Production Davranışı
+
+- `ENV=production` durumunda `REQUIRE_ADMIN_TOKEN_IN_PRODUCTION=true` ise:
+  - `ADMIN_TOKEN` tanımlı değilse `/admin/*` endpoint'leri `503 Service Unavailable` döndürür.
+  - Bu, yanlışlıkla public ve korumasız admin endpoint açılmasını engeller.
+- Public deployment öncesi güçlü bir `ADMIN_TOKEN` tanımlanmalıdır.
+
 ## 2. Yerel / Geliştirme Modu
 
-Eğer `ADMIN_TOKEN` ayarlanmamışsa, admin endpoint'leri herhangi bir doğrulama gerektirmeden çalışır. Bu mod sadece yerel testler ve geliştirme aşaması için uygundur. Üretim (production) ortamında kesinlikle bir token ayarlanmalıdır.
+Eğer `ADMIN_TOKEN` ayarlanmamışsa, admin endpoint'leri yerel geliştirme modunda doğrulamasız çalışabilir. Bu mod sadece local testler için uygundur. Üretimde kesinlikle token kullanılmalıdır.
 
 ## 3. Erişim Kısıtlamaları
 

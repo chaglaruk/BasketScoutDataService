@@ -82,6 +82,7 @@ FastAPI (8787)
 .\scripts\test.ps1   # pytest
 .\scripts\lint.ps1   # ruff
 .\scripts\smoke.ps1  # canlı endpoint smoke test (sunucu açık olmalı)
+.\scripts\prod_smoke.ps1 -BaseUrl http://127.0.0.1:8787  # deployment smoke
 ```
 
 ## 🐳 Docker
@@ -89,6 +90,19 @@ FastAPI (8787)
 ```powershell
 docker compose up -d
 ```
+
+Production smoke:
+
+```powershell
+.\scripts\prod_smoke.ps1 -BaseUrl http://127.0.0.1:8787
+```
+
+## 🔐 Deployment Safety Notes
+
+- Public deployment öncesi `ADMIN_TOKEN` ayarlanmalıdır.
+- `ENV=production` modunda token yoksa `/admin/*` endpointleri `503` döner.
+- `CORS_ALLOWED_ORIGINS` production'da explicit origin listesi olmalıdır (`*` önerilmez).
+- Detaylı adımlar için `DEPLOYMENT_GUIDE.md` dosyasına bakın.
 
 ## 📁 Proje Yapısı
 
@@ -117,6 +131,8 @@ BasketScoutDataService/
 | [DATA_SOURCE_STRATEGY.md](DATA_SOURCE_STRATEGY.md) | Veri kaynağı stratejisi |
 | [SCRAPING_POLICY.md](SCRAPING_POLICY.md) | Scraping politikası |
 | [PROVIDER_STATUS.md](PROVIDER_STATUS.md) | Provider durum raporu |
+| [ADMIN_SECURITY.md](ADMIN_SECURITY.md) | Admin endpoint güvenliği |
+| [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) | Remote deployment hazırlık rehberi |
 | [ANDROID_INTEGRATION_GUIDE.md](ANDROID_INTEGRATION_GUIDE.md) | Android entegrasyon rehberi |
 | [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) | Geliştirme iş akışı |
 

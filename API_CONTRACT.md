@@ -189,6 +189,10 @@ API sözleşmesi.
 
 ## POST /admin/refresh
 
+> Admin endpoint'leri için `X-Admin-Token` header'ı gerekebilir.
+> `ENV=production` ve `ADMIN_TOKEN` yoksa admin endpoint'leri `503` döner.
+> `ADMIN_TOKEN` ayarlıysa eksik/yanlış token `401` döner.
+
 **İstek (opsiyonel):**
 ```json
 {

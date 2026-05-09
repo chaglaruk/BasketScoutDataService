@@ -18,6 +18,18 @@ header_scheme = APIKeyHeader(name="X-Admin-Token", auto_error=False)
 
 def check_admin_auth(token: str = Depends(header_scheme)):
     settings = get_settings()
+    if (
+        settings.is_production
+        and settings.require_admin_token_in_production
+        and not settings.admin_token
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=(
+                "ADMIN_TOKEN is required in production for /admin endpoints. "
+                "Set ADMIN_TOKEN before public deployment."
+            ),
+        )
     # Eğer admin_token ayarlanmışsa kontrol et
     if settings.admin_token and (not token or token != settings.admin_token):
         raise HTTPException(
