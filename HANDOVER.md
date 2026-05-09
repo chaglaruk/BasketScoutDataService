@@ -74,3 +74,6 @@ Implemented manual price management admin endpoints (/admin/manual-prices/*). Ad
 
 ## Milestone 29 Completed
 Hardened admin endpoints with optional ADMIN_TOKEN security (X-Admin-Token header). Added validation tests and documentation (ADMIN_SECURITY.md). Verified Android integration and fallback stability.
+
+## Milestone 30 Completed
+Hardened config parsing for `DEBUG` env collisions. Backend now safely maps `DEBUG=release|prod|production` to `False` and `DEBUG=development|dev` to `True`, preventing test/startup failures from global environment variables. Added regression tests in `tests/test_config.py`.

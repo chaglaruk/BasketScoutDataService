@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from typing import Any
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -52,6 +53,17 @@ class Settings(BaseSettings):
         if upper not in allowed:
             raise ValueError(f"log_level {v!r} geçersiz; izin verilenler: {allowed}")
         return upper
+
+    @field_validator("debug", mode="before")
+    @classmethod
+    def normalize_debug(cls, value: Any) -> Any:
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            if normalized in {"release", "prod", "production"}:
+                return False
+            if normalized in {"dev", "development"}:
+                return True
+        return value
 
 
 @lru_cache
