@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python 3.11 kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Bağımlılıkları yükle
+        run: pip install -r requirements.txt
+
+      - name: Ruff lint
+        run: ruff check app/ tests/
+
+      - name: pytest
+        run: pytest tests/ -v --tb=short
+        env:
+          APP_ENV: test
+          DATABASE_URL: sqlite:///./data/test.db
+          DEFAULT_PROVIDER: mock
+          ENABLE_SCRAPING: "false"

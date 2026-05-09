@@ -1,0 +1,13 @@
+retailer,retailer_slug,product_name,alias,category,price,loyalty_price,available,postcode,source_url,last_checked_at
+Tesco,tesco,Semi-Skimmed Milk 2L,milk,Dairy,1.55,1.40,true,SE13,,2026-05-08T12:00:00
+Asda,asda,Semi-Skimmed Milk 2L,milk,Dairy,1.50,,true,SE13,,2026-05-08T12:00:00
+Sainsbury's,sainsburys,Semi-Skimmed Milk 2L,milk,Dairy,1.65,1.50,true,SE13,,2026-05-08T12:00:00
+Morrisons,morrisons,Semi-Skimmed Milk 2L,milk,Dairy,1.60,1.45,true,SE13,,2026-05-08T12:00:00
+Waitrose,waitrose,Semi-Skimmed Milk 2L,milk,Dairy,1.85,,true,SE13,,2026-05-08T12:00:00
+Aldi,aldi,Whole Milk 2L,milk,Dairy,1.29,,true,SE13,,2026-05-08T12:00:00
+Lidl,lidl,Whole Milk 2L,milk,Dairy,1.35,,true,SE13,,2026-05-08T12:00:00
+Tesco,tesco,White Bread 800g,bread,Bakery,1.10,,true,SE13,,2026-05-08T12:00:00
+Asda,asda,White Bread 800g,bread,Bakery,1.05,,true,SE13,,2026-05-08T12:00:00
+Sainsbury's,sainsburys,White Bread 800g,bread,Bakery,1.15,,true,SE13,,2026-05-08T12:00:00
+Aldi,aldi,White Bread 800g,bread,Bakery,0.89,,true,SE13,,2026-05-08T12:00:00
+Lidl,lidl,White Bread 800g,bread,Bakery,0.89,,true,SE13,,2026-05-08T12:00:00
