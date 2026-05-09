@@ -1,4 +1,4 @@
-name: CI
+﻿name: CI
 
 on:
   push:
@@ -14,20 +14,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Python 3.11 kur
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Bağımlılıkları yükle
+      - name: Install dependencies
         run: pip install -r requirements.txt
 
       - name: Ruff lint
         run: ruff check app/ tests/
 
       - name: pytest
-        run: pytest tests/ -v --tb=short
+        run: python -m pytest tests/ -v --tb=short
         env:
           APP_ENV: test
           DATABASE_URL: sqlite:///./data/test.db
