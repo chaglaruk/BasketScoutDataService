@@ -7,11 +7,21 @@ Her anlamlı milestone sonrasında güncellenir.
 ## Son Güncelleme
 
 Tarih: 2026-05-09
-Milestone: 0–7 (Tam kurulum)
+Milestone: Tam Kurulum ve Son Audit
 
-## Proje Durumu
+## Proje Durumu: WORKING
 
-**ÇALIŞIYOR** — Mock API tamamen işlevsel, testler geçiyor.
+**ÇALIŞIYOR** — Tüm testler ve linter (Ruff) geçmektedir.
+
+- **GitHub Repo URL:** https://github.com/chaglaruk/BasketScoutDataService
+- **Güncel Commit Hash:** `bd0be06116ebc0920607c5930078d5bf7f963687`
+- **Sunucu Durumu:** Çalışıyor (http://127.0.0.1:8787)
+- **Endpoint Durumu (Smoke Test):** Başarılı (5/5)
+  - `GET /health` (OK)
+  - `GET /providers/status` (OK)
+  - `GET /products/search?q=milk` (OK)
+  - `GET /prices/latest?product=milk&postcode=SE13` (OK)
+  - `POST /basket/compare` (OK)
 
 ## Tamamlanan Milestones
 
@@ -24,52 +34,29 @@ Milestone: 0–7 (Tam kurulum)
 | 4 — Scraping Spike | ✅ | 8 retailer iskelet, tümü LIMITED |
 | 5 — Scheduler | ✅ | APScheduler, /admin/refresh, /admin/runs |
 | 6 — Android Sözleşmesi | ✅ | API_CONTRACT.md, ANDROID_INTEGRATION_GUIDE.md |
-| 7 — Yerel Dev El Teslimi | ✅ | scripts/dev.ps1, test.ps1, smoke.ps1, doctor.ps1 |
+| 7 — Yerel Dev El Teslimi | ✅ | scripts/dev.ps1, test.ps1, vb. |
+| 8 — Final QA & Audit | ✅ | GitHub entegrasyonu, smoke test, linting |
 
-## Çalışan Özellikler
+## Provider Özeti ve Veri Doğruluğu (Real vs Mock)
 
-- `GET /health` → Sağlık kontrolü
-- `GET /providers/status` → 12 provider durumu (1 OK, 7 LIMITED, 4 OK/LIMITED)
-- `GET /products/search?q=milk` → 10 ürün kategorisi mock verisi
-- `GET /prices/latest?product=milk` → 8 perakendeci fiyatı
-- `POST /basket/compare` → Tam sepet karşılaştırma, sıralama, öneriler
-- `POST /admin/refresh` → Provider refresh tetikleme
-- `GET /admin/runs` → Run geçmişi
+**ÖNEMLİ:** İngiltere süpermarketleri için garantili, ücretsiz, canlı API bulunmamaktadır. Sistemin canlı (gerçek) fiyat dönmediği, `mock` olarak çalıştığı açıkça belirtilmiştir.
 
-## Provider Özeti
+| Provider | Tip | Durum | Veri Niteliği |
+|---|---|---|---|
+| mock | mock | ✅ OK | Sadece Mock/Demo verisi |
+| manual_import | manual | ✅ OK | CSV'den statik fiyat verisi |
+| open_food_facts | open_data | ✅ OK | Gerçek Açık Veri (Sadece meta veri, fiyat YOK) |
+| open_prices | open_data | ~ LIMITED | Gerçek Açık Veri İskeleti (Barkod gerektiriyor) |
+| tesco | scraping | ~ LIMITED | İskelet (JS/Bot Koruması) |
+| asda | scraping | ~ LIMITED | İskelet (JS/Bot Koruması) |
+| sainsburys | scraping | ~ LIMITED | İskelet (JS/Bot Koruması) |
+| morrisons | scraping | ~ LIMITED | İskelet (JS/Bot Koruması) |
+| waitrose | scraping | ~ LIMITED | İskelet (JS/Bot Koruması) |
+| coop | scraping | ~ LIMITED | İskelet (JS/Bot Koruması) |
+| aldi | scraping | ~ LIMITED | İskelet (JS/Bot Koruması) |
+| lidl | scraping | ~ LIMITED | İskelet (JS/Bot Koruması) |
 
-| Provider | Tip | Durum |
-|---|---|---|
-| mock | mock | ✅ OK |
-| manual_import | manual | ✅ OK |
-| open_food_facts | open_data | ✅ OK (internet gerekli) |
-| open_prices | open_data | ~ LIMITED (barkod gerekli) |
-| tesco | scraping | ~ LIMITED (JS/bot) |
-| asda | scraping | ~ LIMITED (JS/bot) |
-| sainsburys | scraping | ~ LIMITED (JS/bot) |
-| morrisons | scraping | ~ LIMITED (JS/bot) |
-| waitrose | scraping | ~ LIMITED (JS/bot) |
-| coop | scraping | ~ LIMITED (JS/bot) |
-| aldi | scraping | ~ LIMITED (JS/bot) |
-| lidl | scraping | ~ LIMITED (JS/bot) |
+## Sonraki Önerilen Milestone
 
-## Tek Komutla Başlatma
-
-```powershell
-.\scripts\dev.ps1
-```
-
-## Sonraki Adımlar
-
-1. Playwright + Tesco/Sainsbury's denemesi (bot koruma test edilmeli)
-2. OpenPrices barkod entegrasyonu
-3. PostgreSQL geçişi (ölçekleme için)
-4. Admin token koruması
-5. BasketScout Android entegrasyonu
-
-## Bilinen Kısıtlamalar
-
-- İngiltere süpermarketleri için garantili ücretsiz resmi API yok.
-- Tüm scraping provider'ları JavaScript render / bot koruma nedeniyle LIMITED.
-- Canlı fiyat verisi yalnızca scraping başarılı olduğunda mevcut.
-- Mock veri gerçek fiyatları yansıtmaz — referans değerler.
+**Playwright & Headless Browser Entegrasyonu:**
+Mevcut `ScrapingBaseProvider` iskeletlerinin, JS-rendered (React/SPA) ve bot korumalı süpermarket sayfalarını geçebilmesi için projeye `playwright` veya `selenium base` entegre edilerek (örneğin ilk olarak Tesco ve Sainsbury's üzerinde) gerçek zamanlı ağ taraması yeteneği kazandırılması.
