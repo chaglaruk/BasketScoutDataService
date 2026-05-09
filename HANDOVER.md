@@ -62,3 +62,6 @@ Milestone: Tam Kurulum ve Son Audit
 
 **Playwright & Headless Browser Entegrasyonu:**
 Mevcut `ScrapingBaseProvider` iskeletlerinin, JS-rendered (React/SPA) ve bot korumalı süpermarket sayfalarını geçebilmesi için projeye `playwright` veya `selenium base` entegre edilerek (örneğin ilk olarak Tesco ve Sainsbury's üzerinde) gerçek zamanlı ağ taraması yeteneği kazandırılması.
+
+## Milestone 26 Completed
+Implemented provider priority (Manual > OpenPrices > Tesco > Mock). Enhanced API metadata with provider status summary and low-confidence counts.
