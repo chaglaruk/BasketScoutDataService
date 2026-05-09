@@ -64,6 +64,17 @@ Son güncelleme: 2026-05-09
 - lidl.co.uk GB ürün arama JavaScript.
 - Statik erişim kısıtlı.
 
+## Aktif Provider Öncelik Sırası (Milestone 28)
+
+Fiyat karşılaştırması ve sepet optimizasyonu sırasında şu öncelik sırası uygulanır:
+
+1. **manual_import** — En güvenilir, yönetici tarafından onaylanmış veri.
+2. **open_prices** — Açık veri kaynağı (fiyat geçmişi).
+3. **tesco** — Kısıtlı canlı kontrol (LIMITED).
+4. **mock** — Fallback / Demo verisi.
+
+Bu sıralama `GET /admin/provider-priority` endpoint'inden dinamik olarak kontrol edilebilir.
+
 ## Gelecek Geliştirme
 
 1. Playwright entegrasyonu — JS render desteği

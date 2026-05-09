@@ -117,3 +117,25 @@ class ProviderStatusItem(BaseModel):
     supports_stock: bool = Field(default=False, description="Canlı stok sorgulamayı destekler mi")
     confidence_score: float | None = Field(default=None, description="Fiyatların güvenilirlik skoru")
     requires_postcode: bool = False
+# ── Admin / Manual Import ─────────────────────────────────────────────────────
+
+
+class ManualPriceImportItem(BaseModel):
+    retailer: str
+    retailer_slug: str | None = None
+    product_name: str
+    alias: str | None = None
+    category: str | None = None
+    price: float
+    loyalty_price: float | None = None
+    available: bool = True
+    postcode: str | None = None
+    source_url: str | None = None
+    last_checked_at: datetime | None = None
+
+
+class ManualImportSummary(BaseModel):
+    rows_imported: int
+    rows_skipped: int
+    validation_errors: list[str] = Field(default_factory=list)
+    duplicate_handling: str = "overwrite"

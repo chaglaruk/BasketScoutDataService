@@ -49,6 +49,11 @@ class ManualImportProvider(BaseProvider):
             "Verinin doğruluğu ve güncelliği dosyayı güncelleyen kişiye bağlıdır.",
         ]
 
+    def reload(self) -> None:
+        """Verileri yeniden yükler."""
+        self._loaded = False
+        self._ensure_loaded()
+
     def _ensure_loaded(self) -> None:
         if self._loaded:
             return

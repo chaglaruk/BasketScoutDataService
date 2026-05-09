@@ -213,6 +213,54 @@ API sözleşmesi.
 
 ---
 
+---
+
+## GET /admin/manual-prices
+
+**Amaç:** Tüm manuel fiyat kayıtlarını listeler.
+
+**Yanıt:** `list[ManualPriceImportItem]`
+
+---
+
+## POST /admin/manual-prices/import
+
+**Amaç:** Yeni manuel fiyat kayıtlarını içe aktarır.
+
+**İstek:** `list[ManualPriceImportItem]`
+
+**Yanıt:**
+```json
+{
+  "rows_imported": 10,
+  "rows_skipped": 0,
+  "validation_errors": [],
+  "duplicate_handling": "overwrite"
+}
+```
+
+---
+
+## GET /admin/manual-prices/template
+
+**Amaç:** CSV şablonu döndürür.
+
+---
+
+## GET /admin/provider-priority
+
+**Amaç:** Aktif provider öncelik sırasını döndürür.
+
+**Yanıt:**
+```json
+{
+  "priority_order": ["manual_import", "open_prices", "tesco", "mock"],
+  "description": "..."
+}
+```
+
+---
+
 ## GET /admin/runs
 
 **Yanıt:**

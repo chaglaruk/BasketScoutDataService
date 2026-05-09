@@ -65,3 +65,9 @@ Mevcut `ScrapingBaseProvider` iskeletlerinin, JS-rendered (React/SPA) ve bot kor
 
 ## Milestone 26 Completed
 Implemented provider priority (Manual > OpenPrices > Tesco > Mock). Enhanced API metadata with provider status summary and low-confidence counts.
+
+## Milestone 27 Completed
+Backend diagnostics wording polished for users. Store details show formatted source/confidence.
+
+## Milestone 28 Completed
+Implemented manual price management admin endpoints (/admin/manual-prices/*). Added provider priority visibility and Android diagnostics integration.
