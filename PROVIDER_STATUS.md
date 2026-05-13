@@ -81,3 +81,23 @@ Bu sıralama `GET /admin/provider-priority` endpoint'inden dinamik olarak kontro
 2. Tesco resmi API talebi izleme
 3. Perakendeci RSS/sitemap beslemesi araştırması
 4. Open Prices barkod entegrasyonu
+
+---
+
+## Milestone 26 provider reality update
+
+Active priority remains:
+1. `manual_import`
+2. `open_prices`
+3. `tesco_limited`
+4. `mock`
+
+Current status:
+- `manual_import`: working for seeded common UK grocery test items; price yes; stock unknown; manually updated, not live.
+- `open_food_facts`: working for metadata/barcode lookup; no price; no stock.
+- `open_prices`: partial historical/crowdsourced prices; price partial; stock no.
+- `tesco_limited`: limited confidence public-page probe only; no bypass/login/captcha; stock unknown.
+- Asda, Sainsbury's, Aldi, Lidl, Morrisons, Waitrose, Co-op, Iceland, Ocado, M&S Food, Farmfoods: not safe/reliable for guaranteed live price/stock without official/licensed feed or manual/open data import.
+- `mock`: fallback/demo only.
+
+External blocker remains: guaranteed real-time price and stock across all retailers is not available from the current safe provider stack.

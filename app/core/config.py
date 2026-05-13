@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 from typing import Any
 
@@ -106,7 +107,10 @@ class Settings(BaseSettings):
     def finalize_settings(self) -> Settings:
         if self.debug is None:
             self.debug = not self.is_production
-        if not self.database_url:
+        if (
+            ("SQLITE_PATH" in os.environ and "DATABASE_URL" not in os.environ)
+            or not self.database_url
+        ):
             self.database_url = f"sqlite:///{self.sqlite_path}"
         return self
 

@@ -80,3 +80,37 @@ Hardened config parsing for `DEBUG` env collisions. Backend now safely maps `DEB
 
 ## Milestone 30 - Deployment Readiness Completed
 Prepared backend for remote deployment without locking to a hosting provider. Added production-safe config aliases (`HOST/PORT/ENV`), DB fallback (`DATABASE_URL` or `SQLITE_PATH`), configurable CORS allow-list, production admin-token enforcement behavior for `/admin/*`, deployment guide (`DEPLOYMENT_GUIDE.md`), and `scripts/prod_smoke.ps1` for production-style validation.
+
+---
+
+## Milestone 26A/26B - Real data visibility and deployment readiness
+
+Date: 2026-05-13
+
+Status: REAL_DATA_VISIBLE_LOCAL_ONLY.
+
+What changed:
+- Manual/imported CSV data is now preferred over OpenPrices, Tesco limited, and mock fallback.
+- Mock provider is queried only for product names not resolved by non-mock providers.
+- `/basket/compare` metadata now exposes `provider_used`, `confidence`, `last_checked_at`, `freshness`, `why_mock_used`, `stock_status`, and `line_source_summary`.
+- `/providers/reality` exposes implementation, price/stock capability, freshness, confidence, safety constraints, and next safe step per provider/source.
+- Manual CSV seed rows now include retailer display names and manual `last_checked_at` values.
+- Stock is still `Unknown` unless a provider returns reliable availability. No guaranteed live stock is claimed.
+
+Validation:
+- Backend tests: `.venv\\Scripts\\python.exe -m pytest -q` -> 58 passed.
+- Backend lint: `.venv\\Scripts\\python.exe -m ruff check .` -> passed.
+- Local smoke: `scripts\\smoke.ps1` -> passed 5/5.
+- Production-style smoke: `scripts\\prod_smoke.ps1 -SkipAdminChecks` -> passed.
+- Local API: `http://127.0.0.1:8787/health` -> ok.
+
+Sample responses saved locally:
+- `artifacts/real-price-20260513-223630/milk-bread-eggs.json` -> manual_import, winner Aldi, 100% coverage, stock unknown.
+- `artifacts/real-price-20260513-223630/bananas-pasta-rice.json` -> manual_import, winner Aldi, 100% coverage, stock unknown.
+- `artifacts/real-price-20260513-223630/chicken-toilet-roll.json` -> manual_import, winner Aldi, 100% coverage, stock unknown.
+- `artifacts/real-price-20260513-223630/providers-reality.json`.
+
+Deployment decision:
+- No paid/unknown remote deployment was performed.
+- Recommended next hosting path: Dockerized VPS or Render/Railway-style ASGI host with HTTPS, persistent SQLite/Postgres, env vars, and `ADMIN_TOKEN` set.
+- cPanel/shared hosting remains unsuitable unless it supports long-running Python ASGI apps.

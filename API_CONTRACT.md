@@ -305,3 +305,34 @@ HTTP durum kodları:
 3. `is_stale: true` → TTL aşıldı, veri güncel olmayabilir.
 4. `confidence < 1.0` → veri doğruluğu garanti değil.
 5. `available: null` → stok bilgisi mevcut değil.
+
+---
+
+## Milestone 26 metadata additions
+
+`POST /basket/compare` now includes these metadata fields for Android source transparency:
+
+```json
+{
+  "provider_used": "manual_import",
+  "data_mode": "manual data",
+  "confidence": "medium",
+  "last_checked_at": "2026-05-13T21:36:16Z",
+  "freshness": "fresh",
+  "why_mock_used": null,
+  "stock_status": "Unknown unless provider confirms reliable availability",
+  "line_source_summary": { "manual_import": 17 },
+  "warnings": []
+}
+```
+
+Rules:
+- `why_mock_used` is present when mock fallback is used.
+- `stock_status` must not claim in-stock unless a provider confirms reliable availability.
+- Mixed provider baskets use `data_mode = mixed` and line-level source counts.
+
+New endpoint:
+
+`GET /providers/reality`
+
+Returns provider capability rows for manual import, OpenFoodFacts, OpenPrices, Tesco limited, mock fallback, and currently blocked/limited retailers. Use this for diagnostics and deployment readiness, not as a consumer shopping API.

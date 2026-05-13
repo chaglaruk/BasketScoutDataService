@@ -1,4 +1,4 @@
-"""GET /prices/latest — güncel fiyat sorgulama endpoint'i."""
+﻿"""GET /prices/latest â€” gÃ¼ncel fiyat sorgulama endpoint'i."""
 
 from __future__ import annotations
 
@@ -25,32 +25,34 @@ class PricesResponse(BaseModel):
 
 @router.get("/latest", response_model=PricesResponse)
 def get_latest_prices(
-    product: str = Query(..., min_length=1, max_length=200, description="Ürün adı"),
+    product: str = Query(..., min_length=1, max_length=200, description="ÃœrÃ¼n adÄ±"),
     postcode: str | None = Query(
-        None, max_length=10, description="İngiltere posta kodu (opsiyonel)"
+        None, max_length=10, description="Ä°ngiltere posta kodu (opsiyonel)"
     ),
-    provider: str | None = Query(None, description="Provider adı (opsiyonel)"),
+    provider: str | None = Query(None, description="Provider adÄ± (opsiyonel)"),
 ) -> PricesResponse:
-    """Verilen ürün için bilinen en güncel fiyatları döndürür."""
+    """Verilen Ã¼rÃ¼n iÃ§in bilinen en gÃ¼ncel fiyatlarÄ± dÃ¶ndÃ¼rÃ¼r."""
     if not product.strip():
-        raise bad_request("Ürün adı boş olamaz.")
+        raise bad_request("ÃœrÃ¼n adÄ± boÅŸ olamaz.")
 
     provider_names = [provider] if provider else None
-    items, any_stale = _service.get_latest(
+    result = _service.get_latest(
         [product.strip()],
         postcode=postcode,
         provider_names=provider_names,
     )
 
     warning = None
-    if any_stale:
-        warning = "Bazı fiyat verileri güncel değil (TTL aşıldı)."
+    if result.any_stale:
+        warning = "Bazi fiyat verileri guncel degil (TTL asildi)."
+    if result.why_mock_used:
+        warning = result.why_mock_used if warning is None else f"{warning} {result.why_mock_used}"
 
     return PricesResponse(
         query=product,
         postcode=postcode,
-        items=items,
-        count=len(items),
-        any_stale=any_stale,
+        items=result.items,
+        count=len(result.items),
+        any_stale=result.any_stale,
         warning=warning,
     )

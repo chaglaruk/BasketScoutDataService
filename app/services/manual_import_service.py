@@ -9,6 +9,20 @@ from app.domain.models import ManualImportSummary, ManualPriceImportItem
 from app.domain.normalization import normalize_name
 
 logger = logging.getLogger(__name__)
+_RETAILER_DISPLAY_NAMES = {
+    "tesco": "Tesco",
+    "asda": "Asda",
+    "sainsburys": "Sainsbury's",
+    "aldi": "Aldi",
+    "lidl": "Lidl",
+    "morrisons": "Morrisons",
+    "waitrose": "Waitrose",
+    "coop": "Co-op",
+    "iceland": "Iceland",
+    "ocado": "Ocado",
+    "mands": "M&S Food",
+    "farmfoods": "Farmfoods",
+}
 
 
 class ManualImportService:
@@ -21,20 +35,20 @@ class ManualImportService:
             return []
 
         items = []
-        with open(self._csv_path, encoding="utf-8") as f:
+        with open(self._csv_path, encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 try:
                     items.append(
                         ManualPriceImportItem(
-                            retailer=row.get("retailer", ""),
-                            retailer_slug=row.get("retailer_slug"),
+                            retailer=_retailer_name(row),
+                            retailer_slug=_retailer_slug(row),
                             product_name=row.get("product_name", ""),
                             alias=row.get("alias"),
                             category=row.get("category"),
                             price=float(row.get("price", 0)),
                             loyalty_price=float(row["loyalty_price"]) if row.get("loyalty_price") else None,
-                            available=row.get("available", "").lower() in ("true", "yes", "1"),
+                            available=_parse_available(row.get("available")),
                             postcode=row.get("postcode"),
                             source_url=row.get("source_url"),
                         )
@@ -103,8 +117,40 @@ class ManualImportService:
                     "category": item.category,
                     "price": item.price,
                     "loyalty_price": item.loyalty_price,
-                    "available": "true" if item.available else "false",
+                    "available": _format_available(item.available),
                     "postcode": item.postcode,
                     "source_url": item.source_url,
                     "last_checked_at": item.last_checked_at.isoformat() if item.last_checked_at else "",
                 })
+
+
+def _parse_available(raw: str | None) -> bool | None:
+    normalized = (raw or "").strip().lower()
+    if normalized in {"true", "yes", "1"}:
+        return True
+    if normalized in {"false", "no", "0"}:
+        return False
+    return None
+
+
+def _retailer_slug(row: dict) -> str:
+    slug = (row.get("retailer_slug") or "").strip()
+    if slug:
+        return slug
+    return normalize_name((row.get("retailer") or "unknown").strip())
+
+
+def _retailer_name(row: dict) -> str:
+    name = (row.get("retailer") or "").strip()
+    if name:
+        return name
+    slug = _retailer_slug(row)
+    return _RETAILER_DISPLAY_NAMES.get(slug, slug.replace("_", " ").title() or "Unknown")
+
+
+def _format_available(value: bool | None) -> str:
+    if value is True:
+        return "true"
+    if value is False:
+        return "false"
+    return ""

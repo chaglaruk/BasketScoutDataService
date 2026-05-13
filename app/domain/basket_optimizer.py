@@ -152,4 +152,8 @@ def compare_basket(
 def _match_score(query: str, candidate: str) -> float:
     from app.domain.normalization import similarity_score
 
-    return similarity_score(normalize_name(query), normalize_name(candidate))
+    normalized_query = normalize_name(query)
+    normalized_candidate = normalize_name(candidate)
+    if normalized_query in normalized_candidate or normalized_candidate in normalized_query:
+        return 1.0
+    return similarity_score(normalized_query, normalized_candidate)

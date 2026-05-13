@@ -148,3 +148,25 @@ Production'da her zaman HTTPS kullanin:
   - `503` admin: production'da `ADMIN_TOKEN` set edilmemis
   - Bos fiyat listesi: provider durumlarini `/providers/status` ile kontrol edin
   - CORS problemi: `CORS_ALLOWED_ORIGINS` domain listesi eksik veya yanlis
+
+---
+
+## Milestone 26 deployment readiness notes
+
+Remote deployment was not performed in this milestone because no already-approved free/safe host with secrets was available and paid deployment requires explicit approval.
+
+Backend is deployment-ready locally when these environment variables are configured:
+- `HOST`
+- `PORT`
+- `ENV`
+- `DATABASE_URL` or `SQLITE_PATH`
+- `ADMIN_TOKEN`
+- `CORS_ALLOWED_ORIGINS`
+- `LOG_LEVEL`
+
+Production requirements:
+- Use HTTPS.
+- Set `ADMIN_TOKEN`; production admin endpoints must not be public without it.
+- Do not use wildcard CORS in production.
+- Run `scripts/prod_smoke.ps1 -BaseUrl <remote-url> -AdminToken <token>` after deploy.
+- Keep mock fallback enabled for outages, but label it as offline/demo.

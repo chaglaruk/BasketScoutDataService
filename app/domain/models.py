@@ -95,6 +95,13 @@ class BasketCompareMetadata(BaseModel):
     warnings: list[str] = Field(default_factory=list)
     provider_status_summary: dict[str, str] = Field(default_factory=dict)
     stale_or_low_confidence_count: int = Field(default=0)
+    provider_used: str | None = None
+    confidence: str | None = None
+    last_checked_at: datetime | None = None
+    freshness: str | None = None
+    why_mock_used: str | None = None
+    stock_status: str = "Unknown unless provider confirms reliable availability"
+    line_source_summary: dict[str, int] = Field(default_factory=dict)
 
 
 class BasketCompareResponse(BaseModel):
@@ -117,6 +124,25 @@ class ProviderStatusItem(BaseModel):
     supports_stock: bool = Field(default=False, description="Canlı stok sorgulamayı destekler mi")
     confidence_score: float | None = Field(default=None, description="Fiyatların güvenilirlik skoru")
     requires_postcode: bool = False
+
+
+class ProviderRealityItem(BaseModel):
+    name: str
+    implementation_status: str
+    can_provide_price: str
+    can_provide_stock: str
+    data_freshness: str
+    confidence: str
+    legal_safety_constraints: str
+    requires_login_or_session: bool = False
+    blocked_reason: str | None = None
+    next_safe_step: str
+
+
+class ProvidersRealityResponse(BaseModel):
+    generated_at: datetime
+    priority_order: list[str]
+    providers: list[ProviderRealityItem]
 # ── Admin / Manual Import ─────────────────────────────────────────────────────
 
 
@@ -128,7 +154,7 @@ class ManualPriceImportItem(BaseModel):
     category: str | None = None
     price: float
     loyalty_price: float | None = None
-    available: bool = True
+    available: bool | None = None
     postcode: str | None = None
     source_url: str | None = None
     last_checked_at: datetime | None = None

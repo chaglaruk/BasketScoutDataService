@@ -106,3 +106,24 @@ azalan → Eski veri (TTL aşıldıkça düşer)
 | blocked | Erişim engellendi (bot koruması, captcha) |
 | error | Beklenmedik hata |
 | unknown | Henüz test edilmedi |
+
+---
+
+## Milestone 26 data-source strategy
+
+Provider selection must prefer real/manual/open/limited data before mock:
+`manual_import > open_prices > tesco_limited > mock`.
+
+Implementation rules:
+- Do not query mock for product names that are already covered by non-mock providers.
+- If mock is used, include `why_mock_used` in `/basket/compare` metadata.
+- Label manual data as manually updated, not live.
+- Label OpenPrices as open/crowdsourced/historical.
+- Label Tesco as limited-confidence.
+- Stock remains Unknown unless explicitly confirmed by a reliable provider.
+- Do not bypass captcha, login, paywall, private APIs, or bot protection.
+
+Safe next step for broader coverage:
+- Add admin/manual import tooling for more current retailer CSV feeds.
+- Investigate official/licensed data partners before attempting retailer automation.
+- Improve OpenPrices barcode matching only where product/store/currency mapping is clear enough to avoid misleading prices.

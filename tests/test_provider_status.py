@@ -44,3 +44,18 @@ def test_retailer_providers_limited():
                 assert p["status"] in ("ok", "limited", "blocked", "error")
             else:
                 assert p["status"] in ("limited", "blocked", "error")
+
+
+def test_providers_reality_endpoint():
+    r = client.get("/providers/reality")
+    assert r.status_code == 200
+    data = r.json()
+    assert data["priority_order"] == ["manual_import", "open_prices", "tesco", "mock"]
+    providers = {p["name"]: p for p in data["providers"]}
+    assert providers["manual_import"]["can_provide_price"] == "yes"
+    assert providers["manual_import"]["can_provide_stock"] == "no"
+    assert providers["open_food_facts"]["can_provide_price"] == "no"
+    assert providers["open_prices"]["can_provide_price"] == "partial"
+    assert providers["tesco"]["can_provide_stock"] == "no"
+    assert providers["mock"]["can_provide_price"] == "yes_demo"
+    assert providers["iceland"]["implementation_status"] == "not_implemented"

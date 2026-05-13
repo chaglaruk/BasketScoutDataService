@@ -86,6 +86,60 @@ def test_basket_compare_metadata():
     assert isinstance(data["metadata"]["warnings"], list)
 
 
+def test_manual_provider_preferred_over_mock_for_common_basket():
+    payload = {
+        "items": [
+            {"name": "milk", "quantity": 1},
+            {"name": "bread", "quantity": 1},
+            {"name": "eggs", "quantity": 1},
+        ],
+        "coverage_threshold": 0.5,
+    }
+    r = client.post("/basket/compare", json=payload)
+    assert r.status_code == 200
+    data = r.json()
+    assert data["metadata"]["data_mode"] == "manual data"
+    assert data["metadata"]["provider_used"] == "manual_import"
+    assert data["metadata"]["why_mock_used"] is None
+    assert data["metadata"]["line_source_summary"]["manual_import"] > 0
+    assert data["metadata"]["stock_status"] == "Unknown unless provider confirms reliable availability"
+    for store in data["stores"]:
+        for line in store["line_items"]:
+            if line["unit_price"] is not None:
+                assert line["source"] == "manual_import"
+                assert line["available"] is None
+                assert line["confidence"] is not None
+
+
+def test_common_alias_containment_matches_eggs_pack():
+    payload = {
+        "items": [{"name": "eggs", "quantity": 1}],
+        "coverage_threshold": 0.9,
+    }
+    r = client.post("/basket/compare", json=payload)
+    assert r.status_code == 200
+    data = r.json()
+    assert data["recommended"] is not None
+    assert data["recommended"]["coverage"] == 1
+    assert any(
+        line["canonical_name"] and "Eggs" in line["canonical_name"]
+        for store in data["stores"]
+        for line in store["line_items"]
+    )
+
+
+def test_mock_fallback_explains_unresolved_items():
+    payload = {
+        "items": [{"name": "xyznonexistentitem999", "quantity": 1}],
+        "coverage_threshold": 0.5,
+    }
+    r = client.post("/basket/compare", json=payload)
+    assert r.status_code == 200
+    data = r.json()
+    assert data["metadata"]["why_mock_used"]
+    assert "No provider data found" in data["metadata"]["why_mock_used"]
+
+
 def test_basket_compare_missing_items():
     payload = {
         "items": [

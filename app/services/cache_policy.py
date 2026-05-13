@@ -50,14 +50,16 @@ def determine_data_mode(items: list[PriceItem]) -> str:
     sources = {i.source for i in items}
     stale_flags = {i.is_stale for i in items}
 
+    if len(sources) > 1:
+        return "mixed"
+
     if sources == {"mock"}:
         return "mock"
-
-    if "manual_import" in sources:
+    if sources == {"manual_import"}:
         return "manual data"
-    if "open_prices" in sources:
+    if sources == {"open_prices"}:
         return "open price data"
-    if "tesco" in sources:
+    if sources == {"tesco"}:
         return "Tesco limited"
 
     if True in stale_flags and False in stale_flags:
