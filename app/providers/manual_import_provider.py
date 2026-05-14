@@ -176,6 +176,12 @@ class ManualImportProvider(BaseProvider):
                 except (ValueError, TypeError):
                     lc = now
 
+                confidence = 0.7
+                if row.get("confidence"):
+                    import contextlib
+                    with contextlib.suppress(ValueError, TypeError):
+                        confidence = float(row["confidence"])
+
                 results.append(
                     PriceItem(
                         retailer=_retailer_name(row),
@@ -188,7 +194,7 @@ class ManualImportProvider(BaseProvider):
                         source=self.name,
                         source_url=row.get("source_url"),
                         last_checked_at=lc,
-                        confidence=0.7,
+                        confidence=confidence,
                         is_stale=False,
                     )
                 )

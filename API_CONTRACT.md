@@ -336,3 +336,36 @@ New endpoint:
 `GET /providers/reality`
 
 Returns provider capability rows for manual import, OpenFoodFacts, OpenPrices, Tesco limited, mock fallback, and currently blocked/limited retailers. Use this for diagnostics and deployment readiness, not as a consumer shopping API.
+
+---
+
+## Milestone 26C manual feed operations
+
+New manual CSV endpoints:
+
+| Method | Path | Body | Result |
+|---|---|---|---|
+| `POST` | `/admin/manual-prices/validate-csv` | raw `text/csv` | `ManualCsvValidationReport`, no data mutation |
+| `POST` | `/admin/manual-prices/import-csv` | raw `text/csv` | imports valid rows, skips invalid rows, reloads manual provider |
+| `GET` | `/admin/manual-prices/export` | none | current manual feed as `text/csv` |
+
+`ManualCsvValidationReport` fields:
+
+```json
+{
+  "total_rows": 37,
+  "valid_rows": 37,
+  "invalid_rows": 0,
+  "duplicate_rows": 0,
+  "missing_required_fields": 0,
+  "stale_rows": 0,
+  "issues": [],
+  "duplicate_handling": "last row wins"
+}
+```
+
+`ManualImportSummary` now includes `total_rows`, `duplicate_rows`, `invalid_rows`, `missing_required_fields`, and `stale_rows` in addition to imported/skipped counts.
+
+`GET /prices/latest?product=<name>&provider=<provider>` now returns a plain `warning` when a specific provider returns zero rows. This is used for OpenPrices/Tesco limited fallback clarity and does not force mock fallback when the caller explicitly asks for one provider.
+
+Stock rule remains unchanged: `available: null` means stock is unknown. Do not interpret manual/mock/open price rows as confirmed stock.

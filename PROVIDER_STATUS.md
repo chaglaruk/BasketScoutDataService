@@ -101,3 +101,31 @@ Current status:
 - `mock`: fallback/demo only.
 
 External blocker remains: guaranteed real-time price and stock across all retailers is not available from the current safe provider stack.
+
+---
+
+## Milestone 26C provider operations update - 2026-05-14
+
+Changes:
+- Manual import now has CSV validation, CSV import, CSV export, and an admin CLI/script wrapper.
+- Sample manual CSV covers the common MVP products: milk, bread, eggs, bananas, pasta, rice, chicken breast, toilet roll.
+- Manual rows carry `last_checked_at` and `confidence`; confidence defaults to `0.7` when omitted.
+- Mock provider no longer advertises reliable stock. Mock price rows return `available = null`.
+- OpenPrices remains partial. The provider safely uses OpenFoodFacts barcode candidates and GBP OpenPrices rows when clear enough, but sample `milk` returned no usable OpenPrices price in validation.
+- Tesco remains limited. It uses only a low-volume public page probe, confidence `0.3`, no login/captcha/private API bypass, and no stock claim.
+
+Current source capability:
+
+| Provider | Price | Stock | Confidence | Notes |
+|---|---|---|---:|---|
+| manual_import | yes | no | 0.7 | manually updated CSV, preferred over mock |
+| open_food_facts | no | no | n/a | metadata/barcodes only |
+| open_prices | partial | no | 0.55-0.6 | open/crowdsourced/historical, sparse UK matches |
+| tesco | partial | no | 0.3 | limited public-page probe only |
+| mock | demo | no | n/a | fallback only |
+
+Validation:
+- Backend tests: 66 passed.
+- Ruff: passed.
+- Smoke: passed 5/5.
+- Prod smoke: passed.

@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from fastapi.security import APIKeyHeader
 from pydantic import BaseModel
 
 from app.core.config import get_settings
 from app.core.time import utcnow
-from app.domain.models import ManualImportSummary, ManualPriceImportItem
+from app.domain.models import ManualCsvValidationReport, ManualImportSummary, ManualPriceImportItem
 from app.services.manual_import_service import ManualImportService
 from app.services.provider_registry import get_registry
 from app.services.refresh_service import RefreshService
@@ -127,10 +127,40 @@ def import_manual_prices(items: list[ManualPriceImportItem]) -> ManualImportSumm
     return summary
 
 
+@router.post("/manual-prices/validate-csv", response_model=ManualCsvValidationReport)
+def validate_manual_prices_csv(
+    csv_body: str = Body(..., media_type="text/csv"),
+) -> ManualCsvValidationReport:
+    """Validate a manual price CSV body without changing stored data."""
+    return _manual_service.validate_csv_text(csv_body)
+
+
+@router.post("/manual-prices/import-csv", response_model=ManualImportSummary)
+def import_manual_prices_csv(
+    csv_body: str = Body(..., media_type="text/csv"),
+) -> ManualImportSummary:
+    """Import manual prices from a CSV body. Invalid rows are skipped."""
+    summary = _manual_service.import_csv_text(csv_body)
+
+    registry = get_registry()
+    manual_provider = registry.get("manual_import")
+    if manual_provider and hasattr(manual_provider, "reload"):
+        manual_provider.reload()
+
+    return summary
+
+
 @router.get("/manual-prices/template")
 def get_manual_prices_template():
     """CSV şablonu döndürür."""
     content = _manual_service.get_template_csv()
+    return Response(content=content, media_type="text/csv")
+
+
+@router.get("/manual-prices/export")
+def export_manual_prices():
+    """Export current manual prices as CSV."""
+    content = _manual_service.export_csv()
     return Response(content=content, media_type="text/csv")
 
 

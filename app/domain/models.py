@@ -158,10 +158,33 @@ class ManualPriceImportItem(BaseModel):
     postcode: str | None = None
     source_url: str | None = None
     last_checked_at: datetime | None = None
+    confidence: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class ManualImportSummary(BaseModel):
+    total_rows: int = 0
     rows_imported: int
     rows_skipped: int
+    duplicate_rows: int = 0
+    invalid_rows: int = 0
+    missing_required_fields: int = 0
+    stale_rows: int = 0
     validation_errors: list[str] = Field(default_factory=list)
     duplicate_handling: str = "overwrite"
+
+
+class ManualCsvValidationIssue(BaseModel):
+    row_number: int
+    field: str | None = None
+    message: str
+
+
+class ManualCsvValidationReport(BaseModel):
+    total_rows: int = 0
+    valid_rows: int = 0
+    invalid_rows: int = 0
+    duplicate_rows: int = 0
+    missing_required_fields: int = 0
+    stale_rows: int = 0
+    issues: list[ManualCsvValidationIssue] = Field(default_factory=list)
+    duplicate_handling: str = "last row wins"

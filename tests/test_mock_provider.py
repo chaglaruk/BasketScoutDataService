@@ -41,6 +41,7 @@ def test_mock_prices_milk(provider):
     assert "tesco" in retailers
     assert "asda" in retailers
     assert "aldi" in retailers
+    assert all(p.available is None for p in prices)
 
 
 def test_mock_prices_confidence(provider):
@@ -65,3 +66,4 @@ def test_mock_refresh(provider):
 def test_mock_type(provider):
     assert provider.type == "mock"
     assert provider.supports_live_prices is False
+    assert provider.supports_stock is False

@@ -1,10 +1,13 @@
-"""TescoProvider — Tesco scraping provider (güvenli statik HTTP denemesi)."""
+﻿"""TescoProvider - limited safe public-page price probe."""
 
 from __future__ import annotations
 
 import logging
+import re
+from urllib.parse import quote_plus
 
 import httpx
+from bs4 import BeautifulSoup
 
 from app.core.time import utcnow
 from app.domain.models import PriceItem, ProductSummary, ProviderStatusItem
@@ -12,21 +15,17 @@ from app.providers.retailers.scraping_base import ScrapingBaseProvider
 
 logger = logging.getLogger(__name__)
 
-_SEARCH_URL = "https://www.tesco.com/groceries/en-GB/search?query={query}&count=10"
+_SEARCH_URL = "https://www.tesco.com/shop/en-GB/search?query={query}"
+_USER_AGENT = "BasketScoutDataService/0.1.0 (limited safe probe)"
+_PRICE_RE = re.compile(r"£\s*(\d+(?:\.\d{2})?)")
 
 
 class TescoProvider(ScrapingBaseProvider):
-    """
-    Tesco scraping provider.
+    """Limited Tesco public-page probe.
 
-    DURUM: LIMITED
-    Tesco arama sonuçları JavaScript ile render edilir; statik HTTP yeterli değil.
-    Playwright entegrasyonu gerektirir ve bot koruma sistemi aktiftir.
-    Captcha veya login bypass yapılmayacaktır.
-
-    Gelecek geliştirme:
-    - Tesco resmi bir API yayınlarsa buraya eklenecek.
-    - Playwright + stealth modu araştırılabilir (bot korumaya saygı göstererek).
+    The provider does not bypass login, captcha, bot protection or private APIs.
+    It only attempts a low-volume public search page fetch. If the public HTML
+    does not expose stable product/price content, it returns no prices.
     """
 
     @property
@@ -35,26 +34,32 @@ class TescoProvider(ScrapingBaseProvider):
 
     @property
     def supports_live_prices(self) -> bool:
-        return True  # Feasibility probe eklendi
+        return False
+
+    @property
+    def supports_stock(self) -> bool:
+        return False
 
     @property
     def limitations(self) -> list[str]:
         return [
-            "Resmi API yoktur.",
-            "Aşırı istekte IP bloklaması olabilir (Bot koruması).",
-            "Güvenli limitli probe çalıştırılıyor.",
+            "Limited public-page probe only; not an official Tesco API.",
+            "No login, captcha, private API, or bot-protection bypass is used.",
+            "Search pages may be JavaScript rendered, blocked, or structurally unstable.",
+            "Stock availability is not provided reliably and remains Unknown.",
         ]
 
     def status(self) -> ProviderStatusItem:
         return ProviderStatusItem(
             name=self.name,
-            status="ok", # Feasibility probe added
+            status="limited",
             type=self.type,
             last_run_at=utcnow(),
-            message="Tesco arama sayfası erişilebilir ve Regex probe kullanılıyor.",
+            message="Tesco limited public-page probe is available but low confidence.",
             limitations=self.limitations,
             supports_live_prices=self.supports_live_prices,
             supports_stock=self.supports_stock,
+            confidence_score=0.3,
         )
 
     def search_products(self, query: str) -> list[ProductSummary]:
@@ -65,67 +70,55 @@ class TescoProvider(ScrapingBaseProvider):
         product_names: list[str],
         postcode: str | None = None,
     ) -> list[PriceItem]:
-        import re
-
-        from bs4 import BeautifulSoup
-        results = []
+        results: list[PriceItem] = []
         for name in product_names:
             try:
-                r = httpx.get(
-                    f"https://www.tesco.com/shop/en-GB/search?query={name}",
-                    headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
-                    timeout=10.0,
-                    follow_redirects=True
-                )
-                if r.status_code == 200:
-                    soup = BeautifulSoup(r.text, 'html.parser')
-
-                    # 1. Product container'lar bulmaya calis (Tesco'nun genis listesi)
-                    # Gercek sayfa yapisi srekli degistiginden, href'i urun iceren a etiketlerini veya fiyatlari ariyoruz
-
-                    found_price = None
-                    found_name = None
-                    confidence = 0.3 # Default low confidence due to scraping heuristic
-
-                    # Sayfadaki tum text'i kontrol edip hedeflenen urun var mi bakalim
-                    text_lower = r.text.lower()
-                    name_words = name.lower().split()
-                    matches_name = all(w in text_lower for w in name_words)
-
-                    if not matches_name:
-                        logger.info(f"Tesco: '{name}' sayfa iceriginde bulunamadi.")
-                        continue # Fail cleanly
-
-                    # Daha spesifik HTML aramasi (e.g., class'inda price gecen)
-                    price_elements = soup.find_all(string=re.compile(r'^£\d+\.\d{2}$'))
-                    if not price_elements:
-                        # Fallback to naive regex
-                        prices = re.findall(r'£(\d+\.\d{2})', r.text)
-                        if prices:
-                            found_price = float(prices[0])
-                            found_name = f"{name} (Tesco Tahmini)"
-                            confidence = 0.2 # Very low confidence, naive regex
-                    else:
-                        found_price = float(price_elements[0].replace('£', ''))
-                        found_name = f"{name} (Tesco Arama Sonucu)"
-                        confidence = 0.5 # A bit better, found a specific price element
-
-                    if found_price is not None:
-                        results.append(PriceItem(
-                            retailer="Tesco",
-                            retailer_slug="tesco",
-                            product=found_name,
-                            price=found_price,
-                            currency="GBP",
-                            loyalty_price=None,
-                            own_brand=False,
-                            available=None, # Mark stock as unknown since it's not reliable
-                            source=self.name,
-                            source_url=str(r.url),
-                            last_checked_at=utcnow(),
-                            confidence=confidence, # Reduced confidence documented
-                            is_stale=False,
-                        ))
+                item = self._safe_probe(name)
+                if item is not None:
+                    results.append(item)
             except Exception as exc:
-                logger.warning(f"Tesco probe error for {name}: {exc}")
+                logger.warning("Tesco limited probe failed for %s: %s", name, exc)
         return results
+
+    def _safe_probe(self, name: str) -> PriceItem | None:
+        url = _SEARCH_URL.format(query=quote_plus(name))
+        response = httpx.get(
+            url,
+            headers={"User-Agent": _USER_AGENT},
+            timeout=10.0,
+            follow_redirects=True,
+        )
+        if response.status_code != 200:
+            logger.info("Tesco limited probe HTTP %s for %s", response.status_code, name)
+            return None
+
+        text = response.text
+        normalized_text = text.lower()
+        words = [word for word in name.lower().split() if len(word) > 2]
+        if words and not all(word in normalized_text for word in words):
+            logger.info("Tesco limited probe could not confirm product words for %s", name)
+            return None
+
+        soup = BeautifulSoup(text, "html.parser")
+        visible_text = soup.get_text(" ", strip=True)
+        match = _PRICE_RE.search(visible_text) or _PRICE_RE.search(text)
+        if not match:
+            logger.info("Tesco limited probe found no visible price for %s", name)
+            return None
+
+        price = float(match.group(1))
+        return PriceItem(
+            retailer="Tesco",
+            retailer_slug="tesco",
+            product=f"{name} (Tesco limited match)",
+            price=price,
+            currency="GBP",
+            loyalty_price=None,
+            own_brand=False,
+            available=None,
+            source=self.name,
+            source_url=str(response.url),
+            last_checked_at=utcnow(),
+            confidence=0.3,
+            is_stale=False,
+        )

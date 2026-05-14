@@ -114,3 +114,45 @@ Deployment decision:
 - No paid/unknown remote deployment was performed.
 - Recommended next hosting path: Dockerized VPS or Render/Railway-style ASGI host with HTTPS, persistent SQLite/Postgres, env vars, and `ADMIN_TOKEN` set.
 - cPanel/shared hosting remains unsuitable unless it supports long-running Python ASGI apps.
+
+---
+
+## Milestone 26C - Data feed operations and provider reality cleanup
+
+Date: 2026-05-14
+
+Status: DATA_FEED_OPERATIONS_READY.
+
+What changed:
+- Added manual CSV validation/import/export workflow for admin operations.
+- Added `MANUAL_PRICE_FEED.md` with CSV schema, CLI commands, validation report fields, and stock policy.
+- Added `scripts/manual_feed.ps1` and expanded `python -m app.scripts.import_csv` with `validate`, `import`, `export`, and `summary` commands.
+- Expanded `data/manual_import/sample_prices.csv` to 37 validated rows covering the MVP grocery set.
+- Added route warnings when a provider-specific `/prices/latest` query returns no rows.
+- OpenPrices now uses OpenFoodFacts barcode candidates and GBP OpenPrices rows where available, but remains partial/open/historical.
+- Tesco remains a low-confidence public-page probe only; no login/captcha/private API bypass is used.
+- Mock provider no longer reports reliable stock; mock availability is `Unknown` in API output.
+- Runtime SQLite WAL/SHM files were removed from git tracking and ignored.
+
+Validation:
+- Backend tests: `.venv\Scripts\python.exe -m pytest -q` -> 66 passed.
+- Backend lint: `.venv\Scripts\python.exe -m ruff check .` -> passed.
+- Manual CSV validation: 37 total, 37 valid, 0 invalid, 0 duplicate, 0 stale.
+- Smoke: `scripts\smoke.ps1` -> passed 5/5.
+- Prod smoke: `scripts\prod_smoke.ps1 -SkipAdminChecks` -> passed.
+
+Backend artifacts:
+- `artifacts/provider-ops-20260514-131905/milk-bread-eggs-basket-compare.json`
+- `artifacts/provider-ops-20260514-131905/bananas-pasta-rice-basket-compare.json`
+- `artifacts/provider-ops-20260514-131905/chicken-toilet-roll-basket-compare.json`
+- `artifacts/provider-ops-20260514-131905/open-prices-milk.json`
+- `artifacts/provider-ops-20260514-131905/tesco-milk.json`
+- `artifacts/provider-ops-20260514-131905/providers-reality.json`
+
+Observed provider behavior:
+- MVP sample baskets returned `manual_import` data and stock Unknown.
+- OpenPrices milk query returned no usable row and now includes a warning/fallback reason.
+- Tesco milk query returned one low-confidence limited row with stock Unknown.
+
+Remaining blocker:
+- Broader guaranteed live price/stock coverage requires official/licensed retailer feeds or data partnerships. It is not solved by scraping without bypassing retailer protections.

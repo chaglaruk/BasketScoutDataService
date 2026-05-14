@@ -71,3 +71,21 @@ Bu matris Milestone 26A yerel backend + Android testlerini tanimlar. Testler ger
 | Offline demo mode | n/a | mock fallback only | `artifacts/phone-run-20260513-224241/settings-offline-fallback.png` | PASS |
 
 Crash check: `artifacts/phone-run-20260513-224241/logcat-final.txt` contains no crash indicators.
+
+---
+
+## Milestone 26C local E2E results - 2026-05-14
+
+| Test | Evidence | Observed source | Result |
+|---|---|---|---|
+| Backend sample: milk + bread + eggs | `artifacts/provider-ops-20260514-131905/milk-bread-eggs-basket-compare.json` | manual_import | PASS |
+| Backend sample: bananas + pasta + rice | `artifacts/provider-ops-20260514-131905/bananas-pasta-rice-basket-compare.json` | manual_import | PASS |
+| Backend sample: chicken breast + toilet roll | `artifacts/provider-ops-20260514-131905/chicken-toilet-roll-basket-compare.json` | manual_import | PASS |
+| OpenPrices milk provider-specific query | `artifacts/provider-ops-20260514-131905/open-prices-milk.json` | no rows, warning shown | PASS / PARTIAL_OPEN_DATA |
+| Tesco milk provider-specific query | `artifacts/provider-ops-20260514-131905/tesco-milk.json` | tesco limited, confidence 0.3 | PASS / LIMITED |
+| Android Local ADB mode | `artifacts/phone-run-20260514-132207/settings-local-mode.png` | connected to `http://127.0.0.1:8787` | PASS |
+| Android result section | `artifacts/phone-run-20260514-132207/home-winner-manual-data.png` | Manually updated price data | PASS |
+| Android Store Detail | `artifacts/phone-run-20260514-132207/store-detail-manual-data.png` | manual, checked, fresh, medium confidence, stock unknown | PASS |
+| Android Product Detail | `artifacts/phone-run-20260514-132207/product-detail-data-details-manual.png` | manual_import, medium, last checked | PASS |
+
+Crash check: `artifacts/phone-run-20260514-132207/logcat-final.txt` contains no crash indicators.

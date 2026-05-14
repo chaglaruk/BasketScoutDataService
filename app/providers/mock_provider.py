@@ -198,7 +198,7 @@ class MockProvider(BaseProvider):
 
     @property
     def supports_stock(self) -> bool:
-        return True  # Demo stok verisi var
+        return False  # Demo stock is not reliable provider-confirmed availability
 
     @property
     def limitations(self) -> list[str]:
@@ -260,7 +260,7 @@ class MockProvider(BaseProvider):
                     key = (product["id"], retailer["slug"])
                     if key not in _PRICES:
                         continue
-                    price, loyalty, available, own_brand = _PRICES[key]
+                    price, loyalty, _available, own_brand = _PRICES[key]
                     items.append(
                         PriceItem(
                             retailer=retailer["name"],
@@ -270,7 +270,7 @@ class MockProvider(BaseProvider):
                             currency="GBP",
                             loyalty_price=loyalty,
                             own_brand=own_brand,
-                            available=available,
+                            available=None,
                             source="mock",
                             last_checked_at=checked_at,
                             confidence=1.0,

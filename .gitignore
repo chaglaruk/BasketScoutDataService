@@ -31,8 +31,13 @@ env/
 
 # SQLite database
 *.db
+*.db-wal
+*.db-shm
 *.sqlite
 *.sqlite3
+data/*.db
+data/*.db-wal
+data/*.db-shm
 
 # IDE
 .vscode/settings.json
@@ -59,6 +64,6 @@ htmlcov/
 playwright/.auth/
 
 # Artifacts (generated)
-artifacts/*.json
-artifacts/*.csv
-artifacts/*.png
+artifacts/
+scratch/
+*.tmp

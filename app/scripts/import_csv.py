@@ -1,94 +1,102 @@
-"""import_csv.py — ManualImportProvider için CSV doğrulama ve içe aktarma betiği."""
+﻿"""Manual price feed CLI.
 
-import csv
-import sys
+Usage:
+    python -m app.scripts.import_csv validate data/manual_import/sample_prices.csv
+    python -m app.scripts.import_csv import data/manual_import/sample_prices.csv
+    python -m app.scripts.import_csv export artifacts/manual-export.csv
+    python -m app.scripts.import_csv summary
+"""
+from __future__ import annotations
+
+import argparse
+import json
 from pathlib import Path
-from typing import TextIO
+from typing import Any
 
-REQUIRED_COLUMNS = {"retailer", "retailer_slug", "product_name", "category", "price"}
+from pydantic import BaseModel
 
-def import_csv(file_stream: TextIO, target_path: Path) -> dict:
-    reader = csv.DictReader(file_stream)
+from app.services.manual_import_service import ManualImportService
+from app.services.provider_registry import get_registry
 
-    if not reader.fieldnames:
-        raise ValueError("CSV dosyası boş veya başlık satırı yok.")
+DEFAULT_CSV = Path("data/manual_import/sample_prices.csv")
 
-    headers = set(reader.fieldnames)
-    missing = REQUIRED_COLUMNS - headers
-    if missing:
-        raise ValueError(f"Eksik zorunlu sütunlar: {', '.join(missing)}")
 
-    valid_rows = []
-    errors = []
+def _model_to_dict(model: BaseModel) -> dict[str, Any]:
+    return model.model_dump(mode="json")
 
-    for i, row in enumerate(reader, start=2):
-        try:
-            # Temel doğrulama
-            if not row["retailer"].strip():
-                raise ValueError("retailer boş olamaz")
-            if not row["retailer_slug"].strip():
-                raise ValueError("retailer_slug boş olamaz")
-            if not row["product_name"].strip():
-                raise ValueError("product_name boş olamaz")
 
-            # Fiyat doğrulama
-            price_str = row["price"].strip()
-            if not price_str:
-                raise ValueError("price boş olamaz")
-            try:
-                price = float(price_str)
-                if price <= 0:
-                    raise ValueError("price 0'dan büyük olmalıdır")
-            except ValueError as err:
-                raise ValueError(f"Geçersiz fiyat formatı: {price_str}") from err
+def _print_json(payload: Any) -> None:
+    print(json.dumps(payload, indent=2, ensure_ascii=False))
 
-            valid_rows.append(row)
 
-        except ValueError as err:
-            errors.append(f"Satır {i}: {err}")
+def _read(path: Path) -> str:
+    if not path.exists():
+        raise SystemExit(f"File not found: {path}")
+    return path.read_text(encoding="utf-8-sig")
 
-    # Duplicate handling
-    deduped = {}
-    for r in valid_rows:
-        key = (r["retailer"], r["product_name"])
-        deduped[key] = r
-    final_rows = list(deduped.values())
 
-    if errors:
-        return {"success": False, "errors": errors, "imported": 0}
+def cmd_validate(args: argparse.Namespace) -> int:
+    service = ManualImportService(args.target)
+    report = service.validate_csv_text(_read(args.csv_file))
+    _print_json(_model_to_dict(report))
+    return 1 if report.invalid_rows else 0
 
-    # Yazma işlemi (varsayılan CSV'yi günceller)
-    target_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(target_path, "w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=reader.fieldnames)
-        writer.writeheader()
-        writer.writerows(final_rows)
 
-    return {"success": True, "errors": [], "imported": len(final_rows)}
+def cmd_import(args: argparse.Namespace) -> int:
+    service = ManualImportService(args.target)
+    summary = service.import_csv_text(_read(args.csv_file))
+    _print_json(_model_to_dict(summary))
+    return 1 if summary.invalid_rows else 0
+
+
+def cmd_export(args: argparse.Namespace) -> int:
+    service = ManualImportService(args.target)
+    output = service.export_csv()
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(output, encoding="utf-8")
+    _print_json({"exported_to": str(args.output), "rows": max(0, len(output.splitlines()) - 1)})
+    return 0
+
+
+def cmd_summary(args: argparse.Namespace) -> int:
+    service = ManualImportService(args.target)
+    items = service.get_all()
+    sources = {}
+    for item in items:
+        slug = item.retailer_slug or item.retailer
+        sources[slug] = sources.get(slug, 0) + 1
+    statuses = [status.model_dump(mode="json") for status in get_registry().all_statuses()]
+    _print_json({"manual_rows": len(items), "manual_rows_by_store": sources, "providers": statuses})
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="BasketScout manual price feed operations")
+    parser.add_argument("--target", type=Path, default=DEFAULT_CSV, help="Target manual CSV path")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    validate = sub.add_parser("validate", help="Validate a manual CSV without importing")
+    validate.add_argument("csv_file", type=Path)
+    validate.set_defaults(func=cmd_validate)
+
+    import_cmd = sub.add_parser("import", help="Import a manual CSV into the target feed")
+    import_cmd.add_argument("csv_file", type=Path)
+    import_cmd.set_defaults(func=cmd_import)
+
+    export = sub.add_parser("export", help="Export the current target feed to CSV")
+    export.add_argument("output", type=Path)
+    export.set_defaults(func=cmd_export)
+
+    summary = sub.add_parser("summary", help="Show manual feed and provider summary")
+    summary.set_defaults(func=cmd_summary)
+    return parser
+
+
+def main() -> int:
+    parser = build_parser()
+    args = parser.parse_args()
+    return args.func(args)
+
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Kullanım: python -m app.scripts.import_csv <csv_dosya_yolu>")
-        sys.exit(1)
-
-    source_file = Path(sys.argv[1])
-    if not source_file.exists():
-        print(f"Hata: Dosya bulunamadı: {source_file}")
-        sys.exit(1)
-
-    target = Path("data/manual_import/sample_prices.csv")
-
-    with open(source_file, encoding="utf-8") as f:
-        try:
-            result = import_csv(f, target)
-            if result["success"]:
-                print(f"Başarılı! {result['imported']} satır içe aktarıldı.")
-                print(f"Hedef: {target.absolute()}")
-            else:
-                print("Hata: CSV doğrulama başarısız oldu.")
-                for err in result["errors"]:
-                    print(f" - {err}")
-                sys.exit(1)
-        except Exception as e:
-            print(f"Beklenmeyen hata: {e}")
-            sys.exit(1)
+    raise SystemExit(main())

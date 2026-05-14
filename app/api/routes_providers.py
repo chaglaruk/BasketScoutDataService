@@ -123,7 +123,7 @@ def _reality_from_status(status: ProviderStatusItem) -> ProviderRealityItem:
             name=status.name,
             implementation_status=status.status,
             can_provide_price="yes_demo",
-            can_provide_stock="demo_only",
+            can_provide_stock="no",
             data_freshness="static demo",
             confidence="demo",
             legal_safety_constraints="Must be labelled Offline demo prices.",

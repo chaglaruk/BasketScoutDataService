@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from app.core.errors import bad_request
 from app.domain.models import PriceItem
 from app.services.price_service import PriceService
+from app.services.provider_registry import get_registry
 
 router = APIRouter(prefix="/prices", tags=["prices"])
 
@@ -47,6 +48,18 @@ def get_latest_prices(
         warning = "Bazi fiyat verileri guncel degil (TTL asildi)."
     if result.why_mock_used:
         warning = result.why_mock_used if warning is None else f"{warning} {result.why_mock_used}"
+    if provider and not result.items:
+        provider_obj = get_registry().get(provider)
+        details = ""
+        if provider_obj:
+            limitations = provider_obj.limitations
+            if limitations:
+                details = f" {limitations[-1]}"
+        provider_warning = (
+            f"Provider '{provider}' returned no price data for '{product.strip()}'."
+            f"{details}"
+        )
+        warning = provider_warning if warning is None else f"{warning} {provider_warning}"
 
     return PricesResponse(
         query=product,

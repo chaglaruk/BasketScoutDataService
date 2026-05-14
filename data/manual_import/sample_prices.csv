@@ -1,39 +1,38 @@
-retailer,retailer_slug,product_name,alias,category,price,loyalty_price,available,postcode,source_url,last_checked_at
-Tesco,tesco,Semi-Skimmed Milk 2L,milk,Dairy,1.55,1.4,,SE13,,
-Asda,asda,Semi-Skimmed Milk 2L,milk,Dairy,1.5,,,SE13,,
-Sainsbury's,sainsburys,Semi-Skimmed Milk 2L,milk,Dairy,1.65,1.5,,SE13,,
-Morrisons,morrisons,Semi-Skimmed Milk 2L,milk,Dairy,1.6,1.45,,SE13,,
-Waitrose,waitrose,Semi-Skimmed Milk 2L,milk,Dairy,1.85,,,SE13,,
-Aldi,aldi,Whole Milk 2L,milk,Dairy,1.29,,,SE13,,
-Lidl,lidl,Whole Milk 2L,milk,Dairy,1.35,,,SE13,,
-Tesco,tesco,White Bread 800g,bread,Bakery,1.1,,,SE13,,
-Asda,asda,White Bread 800g,bread,Bakery,1.05,,,SE13,,
-Sainsbury's,sainsburys,White Bread 800g,bread,Bakery,1.15,,,SE13,,
-Aldi,aldi,White Bread 800g,bread,Bakery,0.89,,,SE13,,
-Lidl,lidl,White Bread 800g,bread,Bakery,0.89,,,SE13,,
-Tesco,tesco,Large Free Range Eggs x12,eggs,Dairy,2.5,,,SE13,,
-Asda,asda,Large Free Range Eggs x12,eggs,Dairy,2.4,,,SE13,,
-Sainsbury's,sainsburys,Large Free Range Eggs x12,eggs,Dairy,2.6,,,SE13,,
-Aldi,aldi,Large Free Range Eggs x12,eggs,Dairy,2.19,,,SE13,,
-Lidl,lidl,Large Free Range Eggs x12,eggs,Dairy,2.19,,,SE13,,
-Tesco,tesco,Bananas x5,bananas,Produce,0.85,,,SE13,,
-Asda,asda,Bananas x5,bananas,Produce,0.8,,,SE13,,
-Aldi,aldi,Bananas x5,bananas,Produce,0.75,,,SE13,,
-Lidl,lidl,Bananas x5,bananas,Produce,0.75,,,SE13,,
-Tesco,tesco,Penne Pasta 500g,pasta,Pantry,0.75,,,SE13,,
-Asda,asda,Penne Pasta 500g,pasta,Pantry,0.7,,,SE13,,
-Aldi,aldi,Penne Pasta 500g,pasta,Pantry,0.65,,,SE13,,
-Lidl,lidl,Penne Pasta 500g,pasta,Pantry,0.65,,,SE13,,
-Tesco,tesco,Basmati Rice 1kg,rice,Pantry,1.85,,,SE13,,
-Asda,asda,Basmati Rice 1kg,rice,Pantry,1.75,,,SE13,,
-Aldi,aldi,Basmati Rice 1kg,rice,Pantry,1.55,,,SE13,,
-Lidl,lidl,Basmati Rice 1kg,rice,Pantry,1.55,,,SE13,,
-Tesco,tesco,Chicken Breast 650g,chicken breast,Meat,5.5,,,SE13,,
-Asda,asda,Chicken Breast 650g,chicken breast,Meat,5.25,,,SE13,,
-Aldi,aldi,Chicken Breast 650g,chicken breast,Meat,4.99,,,SE13,,
-Lidl,lidl,Chicken Breast 650g,chicken breast,Meat,4.99,,,SE13,,
-Tesco,tesco,Toilet Roll x9,toilet roll,Household,4.5,,,SE13,,
-Asda,asda,Toilet Roll x9,toilet roll,Household,4.25,,,SE13,,
-Aldi,aldi,Toilet Roll x9,toilet roll,Household,3.99,,,SE13,,
-Lidl,lidl,Toilet Roll x9,toilet roll,Household,3.99,,,SE13,,
-Test Retailer,test retailer,Test Product,,,9.99,,,,,
+retailer,retailer_slug,product_name,alias,category,price,loyalty_price,available,postcode,source_url,last_checked_at,confidence
+Tesco,tesco,Semi-Skimmed Milk 2L,milk,Dairy,1.55,1.4,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Asda,asda,Semi-Skimmed Milk 2L,milk,Dairy,1.5,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Sainsbury's,sainsburys,Semi-Skimmed Milk 2L,milk,Dairy,1.65,1.5,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Morrisons,morrisons,Semi-Skimmed Milk 2L,milk,Dairy,1.6,1.45,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Waitrose,waitrose,Semi-Skimmed Milk 2L,milk,Dairy,1.85,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Aldi,aldi,Whole Milk 2L,milk,Dairy,1.29,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Lidl,lidl,Whole Milk 2L,milk,Dairy,1.35,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Tesco,tesco,White Bread 800g,bread,Bakery,1.1,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Asda,asda,White Bread 800g,bread,Bakery,1.05,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Sainsbury's,sainsburys,White Bread 800g,bread,Bakery,1.15,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Aldi,aldi,White Bread 800g,bread,Bakery,0.89,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Lidl,lidl,White Bread 800g,bread,Bakery,0.89,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Tesco,tesco,Large Free Range Eggs x12,eggs,Dairy,2.5,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Asda,asda,Large Free Range Eggs x12,eggs,Dairy,2.4,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Sainsbury's,sainsburys,Large Free Range Eggs x12,eggs,Dairy,2.6,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Aldi,aldi,Large Free Range Eggs x12,eggs,Dairy,2.19,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Lidl,lidl,Large Free Range Eggs x12,eggs,Dairy,2.19,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Tesco,tesco,Bananas x5,bananas,Produce,0.85,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Asda,asda,Bananas x5,bananas,Produce,0.8,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Aldi,aldi,Bananas x5,bananas,Produce,0.75,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Lidl,lidl,Bananas x5,bananas,Produce,0.75,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Tesco,tesco,Penne Pasta 500g,pasta,Pantry,0.75,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Asda,asda,Penne Pasta 500g,pasta,Pantry,0.7,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Aldi,aldi,Penne Pasta 500g,pasta,Pantry,0.65,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Lidl,lidl,Penne Pasta 500g,pasta,Pantry,0.65,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Tesco,tesco,Basmati Rice 1kg,rice,Pantry,1.85,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Asda,asda,Basmati Rice 1kg,rice,Pantry,1.75,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Aldi,aldi,Basmati Rice 1kg,rice,Pantry,1.55,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Lidl,lidl,Basmati Rice 1kg,rice,Pantry,1.55,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Tesco,tesco,Chicken Breast 650g,chicken breast,Meat,5.5,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Asda,asda,Chicken Breast 650g,chicken breast,Meat,5.25,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Aldi,aldi,Chicken Breast 650g,chicken breast,Meat,4.99,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Lidl,lidl,Chicken Breast 650g,chicken breast,Meat,4.99,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Tesco,tesco,Toilet Roll x9,toilet roll,Household,4.5,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Asda,asda,Toilet Roll x9,toilet roll,Household,4.25,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Aldi,aldi,Toilet Roll x9,toilet roll,Household,3.99,,,SE13,,2026-05-14T12:01:35+00:00,0.7
+Lidl,lidl,Toilet Roll x9,toilet roll,Household,3.99,,,SE13,,2026-05-14T12:01:35+00:00,0.7

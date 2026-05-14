@@ -127,3 +127,25 @@ Safe next step for broader coverage:
 - Add admin/manual import tooling for more current retailer CSV feeds.
 - Investigate official/licensed data partners before attempting retailer automation.
 - Improve OpenPrices barcode matching only where product/store/currency mapping is clear enough to avoid misleading prices.
+
+---
+
+## Milestone 26C operating strategy
+
+Manual feed is now the operationally ready price path. It is the safest way to keep BasketScout useful without pretending that retailer stock or live prices are guaranteed.
+
+Operational priority:
+1. Import/validate operator-maintained manual CSV rows.
+2. Use OpenPrices only where barcode, GBP currency, store/date and confidence are clear enough.
+3. Use Tesco limited only as low-confidence public-page evidence.
+4. Fall back to mock only when non-mock sources cannot resolve requested items.
+
+Open Food Facts/OpenPrices rules:
+- Use a custom User-Agent.
+- Respect rate limits; never use search-as-you-type against OpenFoodFacts.
+- Treat OpenPrices as crowdsourced/historical. Show freshness and confidence.
+- Never claim stock from OpenPrices or OpenFoodFacts.
+
+Retailer automation rule:
+- Do not bypass captcha, login, paywall, private APIs, or bot protection.
+- If reliable public/licensed feeds are unavailable, mark provider limited/blocked and prefer manual/open data.

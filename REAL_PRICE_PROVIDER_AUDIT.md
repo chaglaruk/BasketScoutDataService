@@ -73,3 +73,35 @@ Validated local provider behavior:
 Manual import is now the only source used for these sample baskets because seeded manual rows cover the requested aliases. OpenPrices and Tesco remain fallback/partial paths, not guaranteed live sources.
 
 Safety decision remains unchanged: no captcha/login/paywall/private API bypass; no claim of guaranteed stock.
+
+---
+
+## Milestone 26C addendum - 2026-05-14
+
+Local validation artifacts:
+
+- `artifacts/provider-ops-20260514-131905/milk-bread-eggs-basket-compare.json`
+- `artifacts/provider-ops-20260514-131905/bananas-pasta-rice-basket-compare.json`
+- `artifacts/provider-ops-20260514-131905/chicken-toilet-roll-basket-compare.json`
+- `artifacts/provider-ops-20260514-131905/open-prices-milk.json`
+- `artifacts/provider-ops-20260514-131905/tesco-milk.json`
+- `artifacts/provider-ops-20260514-131905/providers-reality.json`
+
+Observed backend results:
+
+| Basket/query | Observed source | Result |
+|---|---|---|
+| milk + bread + eggs | manual_import | non-mock, winner Aldi, stock Unknown |
+| bananas + pasta + rice | manual_import | non-mock, winner Aldi, stock Unknown |
+| chicken breast + toilet roll | manual_import | non-mock, winner Aldi, stock Unknown |
+| `prices/latest?product=milk&provider=open_prices` | open_prices | 0 rows; warning explains provider returned no price data and last fallback reason |
+| `prices/latest?product=milk&provider=tesco` | tesco | 1 low-confidence limited row, stock Unknown |
+
+Open data reality:
+- OpenFoodFacts is usable for metadata/barcode lookup, not prices or stock.
+- OpenPrices is a real open/crowdsourced price project, but UK item/store coverage is sparse and historical. It must remain labelled open/crowdsourced, not live.
+- Tesco limited may expose a public-page price heuristic, but it is low confidence and not a reliable live feed.
+
+Safe next step:
+- Expand manual feed rows from operator-maintained CSVs or licensed data exports.
+- For broader live coverage, pursue official/licensed retailer feeds or data partnerships. Do not bypass login, captcha, paywall, private APIs, or bot protection.
