@@ -156,3 +156,17 @@ Observed provider behavior:
 
 Remaining blocker:
 - Broader guaranteed live price/stock coverage requires official/licensed retailer feeds or data partnerships. It is not solved by scraping without bypassing retailer protections.
+
+## Milestone 27B Completed
+
+Implemented GitHub-hosted daily tracked web observation pipeline:
+
+- Added `web_price_watchlist` and `price_observation` data model support.
+- Added safe adapters for Tesco/Aldi/Sainsbury's/Lidl (tracked URLs only).
+- Added `python -m app.scripts.run_daily_price_observation` with machine-readable report and log outputs.
+- Added provider integration (`web_observation`) using only public-display-allowed observations.
+- Added provider diagnostics fields for daily observation status.
+- Added GitHub Actions workflow `.github/workflows/daily-price-observation.yml` (cron + manual dispatch + artifact upload + issue create/update).
+- Added policy/runbook/results documentation for non-bypass, low-risk operation.
+
+Current watchlist seeds are intentionally unconfigured (`enabled=false`, no exact URL) until safe exact URLs are explicitly documented.

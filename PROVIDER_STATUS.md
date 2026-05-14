@@ -129,3 +129,13 @@ Validation:
 - Ruff: passed.
 - Smoke: passed 5/5.
 - Prod smoke: passed.
+
+## Daily Web Observation Provider
+
+- Provider name: `web_observation`
+- Scope: only tracked watchlist URLs.
+- Retailers currently modeled for adapter layer: Tesco, Aldi, Sainsbury's, Lidl.
+- No crawling, no pagination, no link discovery.
+- No login/captcha/WAF bypass.
+- Stock is always `Unknown`.
+- User-facing compare can use only `public_display_allowed=true` observations.

@@ -61,6 +61,8 @@ def determine_data_mode(items: list[PriceItem]) -> str:
         return "open price data"
     if sources == {"tesco"}:
         return "Tesco limited"
+    if sources == {"Observed web price"}:
+        return "observed_web_price"
 
     if True in stale_flags and False in stale_flags:
         return "mixed"

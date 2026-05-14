@@ -43,6 +43,11 @@ class Settings(BaseSettings):
     default_provider: str = "mock"
     enable_scraping: bool = False
     scraping_rate_limit_seconds: float = 2.0
+    web_observation_enabled: bool = True
+    web_observation_timeout_seconds: float = 12.0
+    web_observation_user_agent: str = (
+        "BasketScoutDataService-WebObservation/0.1.0 (public-page-safe; contact@example.com)"
+    )
 
     # Open Food Facts
     off_user_agent: str = "BasketScoutDataService/0.1.0 (contact@example.com)"

@@ -170,3 +170,61 @@ class ProviderRun(Base):
     prices_found: Mapped[int] = mapped_column(Integer, default=0)
     errors_count: Mapped[int] = mapped_column(Integer, default=0)
     message: Mapped[str | None] = mapped_column(Text)
+
+
+class WebPriceWatchlist(Base):
+    __tablename__ = "web_price_watchlist"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    retailer_slug: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    retailer_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    canonical_product_name: Mapped[str] = mapped_column(String(200), nullable=False, index=True)
+    product_url: Mapped[str | None] = mapped_column(Text)
+    expected_product_keywords: Mapped[str | None] = mapped_column(Text)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    max_frequency_hours: Mapped[int] = mapped_column(Integer, default=24, nullable=False)
+    robots_checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    policy_status: Mapped[str] = mapped_column(String(40), default="unconfigured", nullable=False)
+    public_display_allowed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    last_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_success_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_error: Mapped[str | None] = mapped_column(Text)
+    notes: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class PriceObservation(Base):
+    __tablename__ = "price_observation"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    watchlist_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("web_price_watchlist.id"), nullable=False, index=True
+    )
+    run_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("provider_run.id"), index=True)
+    retailer_slug: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    retailer_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    canonical_product_name: Mapped[str] = mapped_column(String(200), nullable=False, index=True)
+    raw_product_name: Mapped[str | None] = mapped_column(String(255))
+    price_amount: Mapped[float | None] = mapped_column(Float)
+    currency: Mapped[str] = mapped_column(String(3), default="GBP", nullable=False)
+    loyalty_price_amount: Mapped[float | None] = mapped_column(Float)
+    observed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    captured_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    provider_used: Mapped[str] = mapped_column(String(80), nullable=False)
+    data_mode: Mapped[str] = mapped_column(String(40), nullable=False)
+    confidence_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    freshness_bucket: Mapped[str] = mapped_column(String(20), nullable=False)
+    source_url: Mapped[str] = mapped_column(Text, nullable=False)
+    stock_status: Mapped[str] = mapped_column(String(30), default="Unknown", nullable=False)
+    warnings: Mapped[str | None] = mapped_column(Text)
+    parser_confidence: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    public_display_allowed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    rights_status: Mapped[str] = mapped_column(String(40), default="internal_only", nullable=False)
+    raw_snippet_hash: Mapped[str | None] = mapped_column(String(128))
+    outcome_status: Mapped[str] = mapped_column(String(50), nullable=False)
+    error_type: Mapped[str | None] = mapped_column(String(60))
+    error_message: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

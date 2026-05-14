@@ -12,6 +12,8 @@ def utcnow() -> datetime:
 
 def seconds_since(dt: datetime) -> float:
     """Verilen datetime'dan bu yana geçen saniye sayısını döndürür."""
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=UTC)
     return (utcnow() - dt).total_seconds()
 
 

@@ -149,3 +149,13 @@ Open Food Facts/OpenPrices rules:
 Retailer automation rule:
 - Do not bypass captcha, login, paywall, private APIs, or bot protection.
 - If reliable public/licensed feeds are unavailable, mark provider limited/blocked and prefer manual/open data.
+
+## 6. Daily Observed Web Price (Tracked URL Model)
+
+- Kaynak: watchlist'te tanimli tekil urun URL'leri.
+- Kisit: broad crawl/spider/discovery yok.
+- Siklik: URL basina en fazla `max_frequency_hours`.
+- Guvenlik: robots/policy ve access-control kontrolleri.
+- Veri etiketi: `Observed web price`.
+- Stock: her zaman `Unknown`.
+- Public gosterim: sadece `public_display_allowed=true`.

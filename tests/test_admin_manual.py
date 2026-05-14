@@ -107,7 +107,7 @@ def test_provider_priority():
     assert response.status_code == 200
     data = response.json()
     assert "priority_order" in data
-    assert data["priority_order"] == ["manual_import", "open_prices", "tesco", "mock"]
+    assert data["priority_order"] == ["manual_import", "web_observation", "open_prices", "tesco", "mock"]
 
 
 def test_admin_auth_behavior(monkeypatch, tmp_path):
@@ -145,3 +145,36 @@ def test_admin_requires_token_in_production(monkeypatch, tmp_path):
 
     response = client.get("/admin/manual-prices")
     assert response.status_code == 503
+
+
+def test_web_watchlist_endpoints():
+    list_response = client.get("/admin/web-watchlist")
+    assert list_response.status_code == 200
+    assert isinstance(list_response.json(), list)
+
+    payload = {
+        "retailer_slug": "tesco",
+        "retailer_name": "Tesco",
+        "canonical_product_name": "Semi-Skimmed Milk 2L",
+        "product_url": None,
+        "expected_product_keywords": "milk,2l",
+        "enabled": False,
+        "max_frequency_hours": 24,
+        "policy_status": "unconfigured",
+        "public_display_allowed": False,
+        "notes": "test upsert",
+    }
+    upsert_response = client.post("/admin/web-watchlist/upsert", json=payload)
+    assert upsert_response.status_code == 200
+    body = upsert_response.json()
+    assert body["retailer_slug"] == "tesco"
+    assert body["canonical_product_name"] == "Semi-Skimmed Milk 2L"
+
+
+def test_daily_observation_run_endpoint_dry_run():
+    response = client.post("/admin/daily-observation/run", json={"dry_run": True, "force": False})
+    assert response.status_code == 200
+    data = response.json()
+    assert "started_at" in data
+    assert "finished_at" in data
+    assert "urls_attempted" in data

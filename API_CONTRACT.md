@@ -369,3 +369,55 @@ New manual CSV endpoints:
 `GET /prices/latest?product=<name>&provider=<provider>` now returns a plain `warning` when a specific provider returns zero rows. This is used for OpenPrices/Tesco limited fallback clarity and does not force mock fallback when the caller explicitly asks for one provider.
 
 Stock rule remains unchanged: `available: null` means stock is unknown. Do not interpret manual/mock/open price rows as confirmed stock.
+
+---
+
+## GET /providers/status (Daily Observation Fields)
+
+Response now includes:
+
+- `daily_job_last_run_at`
+- `enabled_watchlist_count`
+- `successful_observations`
+- `blocked_count`
+- `parse_failed_count`
+- `internal_only_count`
+- `last_report_path`
+- `last_issue_url`
+
+---
+
+## GET /admin/web-watchlist
+
+Returns configured web observation watchlist rows.
+
+## POST /admin/web-watchlist/upsert
+
+Creates/updates a watchlist row.
+
+## POST /admin/daily-observation/run
+
+Runs daily observation manually.
+
+Request:
+
+```json
+{
+  "dry_run": true,
+  "force": false
+}
+```
+
+---
+
+## Daily Observation Script Output
+
+`python -m app.scripts.run_daily_price_observation` writes:
+
+- `artifacts/latest-price-observation-report.json`
+- `logs/latest-price-observation.log`
+
+Important:
+
+- Observed web price is not guaranteed live price.
+- Stock remains `Unknown`.

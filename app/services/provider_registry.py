@@ -21,6 +21,7 @@ from app.providers.retailers.morrisons_provider import MorrisonsProvider
 from app.providers.retailers.sainsburys_provider import SainsburysProvider
 from app.providers.retailers.tesco_provider import TescoProvider
 from app.providers.retailers.waitrose_provider import WaitroseProvider
+from app.providers.web_observation_provider import WebObservationProvider
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +50,7 @@ class ProviderRegistry:
         """TÃ¼m provider'larÄ± baÅŸlatÄ±r."""
         candidates: list[BaseProvider] = [
             ManualImportProvider(),
+            WebObservationProvider(),
             OpenPricesProvider(),
             TescoProvider(),
             OpenFoodFactsProvider(),
@@ -189,7 +191,7 @@ class ProviderRegistry:
             return [self._providers[n] for n in names if n in self._providers]
 
         # Priority order for default comparison
-        priority_order = ["manual_import", "open_prices", "tesco", "mock"]
+        priority_order = ["manual_import", "web_observation", "open_prices", "tesco", "mock"]
         selected = []
         for name in priority_order:
             if name in self._providers:

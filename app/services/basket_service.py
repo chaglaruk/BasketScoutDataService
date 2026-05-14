@@ -35,6 +35,8 @@ class BasketService:
             )
         if price_result.why_mock_used:
             warnings.append(price_result.why_mock_used)
+        if any(item.source == "Observed web price" for item in raw_prices):
+            warnings.append("Observed from public web page. Price may change.")
 
         response = compare_basket(
             request=request,

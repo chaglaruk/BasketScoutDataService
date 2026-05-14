@@ -4,15 +4,17 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.db.models import (
+    PriceObservation,
     PriceSnapshot,
     Product,
     ProductAlias,
     ProviderRun,
     Retailer,
+    WebPriceWatchlist,
 )
 
 # ── Retailer ──────────────────────────────────────────────────────────────────
@@ -179,4 +181,143 @@ class ProviderRunRepository:
             .where(ProviderRun.provider_name == provider_name)
             .order_by(ProviderRun.started_at.desc())
             .limit(1)
+        )
+
+
+class WebPriceWatchlistRepository:
+    def __init__(self, db: Session) -> None:
+        self.db = db
+
+    def get_all(self) -> list[WebPriceWatchlist]:
+        return list(self.db.scalars(select(WebPriceWatchlist).order_by(WebPriceWatchlist.id.asc())))
+
+    def get_enabled(self) -> list[WebPriceWatchlist]:
+        return list(
+            self.db.scalars(
+                select(WebPriceWatchlist)
+                .where(WebPriceWatchlist.enabled.is_(True))
+                .order_by(WebPriceWatchlist.id.asc())
+            )
+        )
+
+    def count_enabled(self) -> int:
+        return int(
+            self.db.scalar(
+                select(func.count()).select_from(WebPriceWatchlist).where(
+                    WebPriceWatchlist.enabled.is_(True)
+                )
+            )
+            or 0
+        )
+
+    def upsert(
+        self,
+        retailer_slug: str,
+        retailer_name: str,
+        canonical_product_name: str,
+        product_url: str | None,
+        expected_product_keywords: str | None,
+        enabled: bool,
+        max_frequency_hours: int = 24,
+        policy_status: str = "unconfigured",
+        public_display_allowed: bool = False,
+        notes: str | None = None,
+    ) -> WebPriceWatchlist:
+        row = self.db.scalar(
+            select(WebPriceWatchlist).where(
+                WebPriceWatchlist.retailer_slug == retailer_slug,
+                WebPriceWatchlist.canonical_product_name == canonical_product_name,
+            )
+        )
+        if row is None:
+            row = WebPriceWatchlist(
+                retailer_slug=retailer_slug,
+                retailer_name=retailer_name,
+                canonical_product_name=canonical_product_name,
+                product_url=product_url,
+                expected_product_keywords=expected_product_keywords,
+                enabled=enabled,
+                max_frequency_hours=max_frequency_hours,
+                policy_status=policy_status,
+                public_display_allowed=public_display_allowed,
+                notes=notes,
+            )
+            self.db.add(row)
+            self.db.flush()
+            return row
+
+        row.retailer_name = retailer_name
+        row.product_url = product_url
+        row.expected_product_keywords = expected_product_keywords
+        row.enabled = enabled
+        row.max_frequency_hours = max_frequency_hours
+        row.policy_status = policy_status
+        row.public_display_allowed = public_display_allowed
+        row.notes = notes
+        self.db.flush()
+        return row
+
+
+class PriceObservationRepository:
+    def __init__(self, db: Session) -> None:
+        self.db = db
+
+    def add(self, item: PriceObservation) -> PriceObservation:
+        self.db.add(item)
+        self.db.flush()
+        return item
+
+    def latest_public_for_product_names(self, product_names: list[str]) -> list[PriceObservation]:
+        if not product_names:
+            return []
+        lowered = [name.strip().lower() for name in product_names if name.strip()]
+        if not lowered:
+            return []
+        rows = list(
+            self.db.scalars(
+                select(PriceObservation)
+                .where(
+                    PriceObservation.outcome_status == "SUCCESS",
+                    PriceObservation.public_display_allowed.is_(True),
+                    PriceObservation.stock_status == "Unknown",
+                )
+                .order_by(PriceObservation.observed_at.desc())
+            )
+        )
+        best: dict[tuple[str, str], PriceObservation] = {}
+        for row in rows:
+            canonical = row.canonical_product_name.strip().lower()
+            if canonical not in lowered:
+                continue
+            key = (row.retailer_slug, canonical)
+            if key not in best:
+                best[key] = row
+        return list(best.values())
+
+    def get_recent_public_success(self, limit: int = 500) -> list[PriceObservation]:
+        return list(
+            self.db.scalars(
+                select(PriceObservation)
+                .where(
+                    PriceObservation.outcome_status == "SUCCESS",
+                    PriceObservation.public_display_allowed.is_(True),
+                    PriceObservation.stock_status == "Unknown",
+                )
+                .order_by(PriceObservation.observed_at.desc())
+                .limit(limit)
+            )
+        )
+
+    def count_internal_only_from_run(self, run_id: int) -> int:
+        return int(
+            self.db.scalar(
+                select(func.count())
+                .select_from(PriceObservation)
+                .where(
+                    PriceObservation.run_id == run_id,
+                    PriceObservation.outcome_status == "SUCCESS",
+                    PriceObservation.public_display_allowed.is_(False),
+                )
+            )
+            or 0
         )

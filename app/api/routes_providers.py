@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from app.core.time import utcnow
 from app.domain.models import ProviderRealityItem, ProvidersRealityResponse, ProviderStatusItem
+from app.services.observation_status_service import get_observation_status_snapshot
 from app.services.provider_registry import get_registry
 
 router = APIRouter(prefix="/providers", tags=["providers"])
@@ -14,13 +15,32 @@ router = APIRouter(prefix="/providers", tags=["providers"])
 
 class ProvidersStatusResponse(BaseModel):
     providers: list[ProviderStatusItem]
+    daily_job_last_run_at: str | None = None
+    enabled_watchlist_count: int = 0
+    successful_observations: int = 0
+    blocked_count: int = 0
+    parse_failed_count: int = 0
+    internal_only_count: int = 0
+    last_report_path: str | None = None
+    last_issue_url: str | None = None
 
 
 @router.get("/status", response_model=ProvidersStatusResponse)
 def providers_status() -> ProvidersStatusResponse:
     """Tum provider'larin guncel durumunu dondurur."""
     registry = get_registry()
-    return ProvidersStatusResponse(providers=registry.all_statuses())
+    snapshot = get_observation_status_snapshot()
+    return ProvidersStatusResponse(
+        providers=registry.all_statuses(),
+        daily_job_last_run_at=snapshot.daily_job_last_run_at,
+        enabled_watchlist_count=snapshot.enabled_watchlist_count,
+        successful_observations=snapshot.successful_observations,
+        blocked_count=snapshot.blocked_count,
+        parse_failed_count=snapshot.parse_failed_count,
+        internal_only_count=snapshot.internal_only_count,
+        last_report_path=snapshot.last_report_path,
+        last_issue_url=snapshot.last_issue_url,
+    )
 
 
 @router.get("/reality", response_model=ProvidersRealityResponse)
@@ -30,6 +50,7 @@ def providers_reality() -> ProvidersRealityResponse:
     status_by_name = {item.name: item for item in registry.all_statuses()}
     implemented_names = [
         "manual_import",
+        "web_observation",
         "open_food_facts",
         "open_prices",
         "tesco",
@@ -64,7 +85,7 @@ def providers_reality() -> ProvidersRealityResponse:
     ]
     return ProvidersRealityResponse(
         generated_at=utcnow(),
-        priority_order=["manual_import", "open_prices", "tesco", "mock"],
+        priority_order=["manual_import", "web_observation", "open_prices", "tesco", "mock"],
         providers=implemented + not_implemented,
     )
 
@@ -105,6 +126,18 @@ def _reality_from_status(status: ProviderStatusItem) -> ProviderRealityItem:
             legal_safety_constraints="Crowdsourced data; not official retailer price.",
             blocked_reason=None if status.status == "ok" else status.message,
             next_safe_step="Tighten barcode, currency and store mapping before using broadly.",
+        )
+    if status.name == "web_observation":
+        return ProviderRealityItem(
+            name=status.name,
+            implementation_status=status.status,
+            can_provide_price="partial",
+            can_provide_stock="no",
+            data_freshness="daily observed web page",
+            confidence="low-medium",
+            legal_safety_constraints="Tracked URLs only. No login/captcha/WAF bypass.",
+            blocked_reason=None if status.status == "ok" else status.message,
+            next_safe_step="Enable only policy-verified URLs with public_display_allowed=true.",
         )
     if status.name == "tesco":
         return ProviderRealityItem(

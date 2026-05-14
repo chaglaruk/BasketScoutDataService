@@ -139,3 +139,19 @@ BasketScoutDataService/
 ## 📄 Lisans
 
 MIT — Detaylar için [LICENSE](LICENSE) dosyasına bakın.
+
+## Daily Web Observation (Milestone 27B)
+
+- Job script: `python -m app.scripts.run_daily_price_observation`
+- Dry-run: `python -m app.scripts.run_daily_price_observation --dry-run`
+- Watchlist data source: `web_price_watchlist` table.
+- Only exact configured URLs are attempted (no crawling/discovery).
+- Stock remains `Unknown` for web observations.
+- Public compare only uses rows with `public_display_allowed=true`.
+- GitHub Actions workflow: `.github/workflows/daily-price-observation.yml`
+
+Observation docs:
+
+- `WEB_PRICE_OBSERVATION_POLICY.md`
+- `WEB_PRICE_OBSERVATION_RUNBOOK.md`
+- `WEB_PRICE_OBSERVATION_RESULTS.md`

@@ -1,0 +1,151 @@
+name: Daily Price Observation
+
+on:
+  schedule:
+    - cron: "17 3 * * *" # Daily at 03:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  actions: read
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint (observation-related)
+        run: ruff check app/ tests/
+
+      - name: Tests
+        run: python -m pytest tests/ -q
+        env:
+          APP_ENV: test
+          DATABASE_URL: sqlite:///./data/test.db
+          DEFAULT_PROVIDER: mock
+          ENABLE_SCRAPING: "false"
+
+      - name: Run daily observation job
+        run: python -m app.scripts.run_daily_price_observation
+        env:
+          ENV: production
+          DEBUG: "false"
+          ENABLE_SCRAPING: "false"
+
+      - name: Build observation summary
+        id: summary
+        run: |
+          python - <<'PY'
+          import os
+          import json
+          from pathlib import Path
+
+          report_path = Path("artifacts/latest-price-observation-report.json")
+          if not report_path.exists():
+              raise SystemExit("Missing report file: artifacts/latest-price-observation-report.json")
+
+          report = json.loads(report_path.read_text(encoding="utf-8"))
+          warnings = report.get("warnings", [])
+          errors = report.get("errors", [])
+          blocked = int(report.get("blocked_by_policy", 0)) + int(report.get("blocked_by_access", 0))
+          parse_failed = int(report.get("parse_failed", 0))
+          network_failed = int(report.get("network_failed", 0))
+
+          has_attention = bool(errors or blocked > 0 or parse_failed > 0 or network_failed > 0)
+
+          summary_lines = [
+              "# BasketScout Daily Observation Summary",
+              "",
+              f"- started_at: {report.get('started_at')}",
+              f"- finished_at: {report.get('finished_at')}",
+              f"- retailers_attempted: {report.get('retailers_attempted')}",
+              f"- urls_attempted: {report.get('urls_attempted')}",
+              f"- prices_observed: {report.get('prices_observed')}",
+              f"- blocked_by_policy: {report.get('blocked_by_policy')}",
+              f"- blocked_by_access: {report.get('blocked_by_access')}",
+              f"- parse_failed: {report.get('parse_failed')}",
+              f"- network_failed: {report.get('network_failed')}",
+              f"- observations_published: {report.get('observations_published')}",
+              f"- observations_internal_only: {report.get('observations_internal_only')}",
+          ]
+
+          if warnings:
+              summary_lines.append("- warnings:")
+              summary_lines.extend([f"  - {w}" for w in warnings])
+          if errors:
+              summary_lines.append("- errors:")
+              summary_lines.extend([f"  - {e}" for e in errors])
+
+          Path("artifacts/latest-price-observation-summary.md").write_text(
+              "\n".join(summary_lines), encoding="utf-8"
+          )
+
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as fh:
+              fh.write(f"has_attention={'true' if has_attention else 'false'}\n")
+          PY
+
+      - name: Upload observation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-price-observation
+          path: |
+            artifacts/latest-price-observation-report.json
+            artifacts/latest-price-observation-summary.md
+            logs/latest-price-observation.log
+          if-no-files-found: error
+
+      - name: Create or update attention issue
+        if: steps.summary.outputs.has_attention == 'true'
+        uses: actions/github-script@v7
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('artifacts/latest-price-observation-report.json', 'utf8'));
+            const title = 'BasketScout daily price observation needs attention';
+
+            const body = [
+              'Daily web observation requires attention.',
+              '',
+              `- date/time (UTC): ${report.finished_at}`,
+              `- retailers_attempted: ${report.retailers_attempted}`,
+              `- urls_attempted: ${report.urls_attempted}`,
+              `- blocked_by_policy: ${report.blocked_by_policy}`,
+              `- blocked_by_access: ${report.blocked_by_access}`,
+              `- parse_failed: ${report.parse_failed}`,
+              `- network_failed: ${report.network_failed}`,
+              `- observations_published: ${report.observations_published}`,
+              `- observations_internal_only: ${report.observations_internal_only}`,
+              '',
+              'Failure types and warnings:',
+              ...((report.warnings || []).map(w => `- warning: ${w}`)),
+              ...((report.errors || []).map(e => `- error: ${e}`)),
+              '',
+              `Workflow artifacts/report: ${process.env.RUN_URL}`,
+              '',
+              'Reminder: Stock remains Unknown and no bypass (captcha/login/WAF/private API) should be attempted.'
+            ].join('\n');
+
+            const { owner, repo } = context.repo;
+            const issues = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
+            const existing = issues.data.find(i => i.title === title);
+
+            if (existing) {
+              await github.rest.issues.update({ owner, repo, issue_number: existing.number, body });
+            } else {
+              await github.rest.issues.create({ owner, repo, title, body, labels: ['operations', 'observation'] });
+            }
