@@ -22,6 +22,7 @@ from app.db.repositories import (
 )
 from app.providers.web_observation_adapters import (
     OUTCOME_BLOCKED_ACCESS,
+    OUTCOME_DRY_RUN,
     OUTCOME_NETWORK_FAILED,
     OUTCOME_PARSE_FAILED,
     OUTCOME_SUCCESS,
@@ -37,6 +38,16 @@ BLOCKED_BY_POLICY = "BLOCKED_BY_ROBOTS_OR_POLICY"
 
 
 @dataclass
+class FailureDetail:
+    retailer: str
+    product: str
+    url: str
+    failure_type: str
+    suggested_safe_action: str
+    error: str | None = None
+
+
+@dataclass
 class ObservationReport:
     started_at: str
     finished_at: str
@@ -49,6 +60,7 @@ class ObservationReport:
     network_failed: int
     observations_published: int
     observations_internal_only: int
+    failure_details: list[dict[str, str | None]] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
 
@@ -143,6 +155,18 @@ def _adapter_for_slug(slug: str, timeout_seconds: float, user_agent: str):
     return None
 
 
+def _safe_action_for_failure(failure_type: str) -> str:
+    if failure_type == BLOCKED_BY_POLICY:
+        return "Keep row disabled and review robots/policy. Do not bypass restrictions."
+    if failure_type == OUTCOME_BLOCKED_ACCESS:
+        return "Treat retailer as blocked; do not attempt bypass/captcha/proxy/private API."
+    if failure_type == OUTCOME_PARSE_FAILED:
+        return "Review parser for this exact page structure or disable row if unstable."
+    if failure_type == OUTCOME_NETWORK_FAILED:
+        return "Retry on next schedule and verify endpoint reachability."
+    return "Review safely; do not bypass access controls."
+
+
 def run_daily_price_observation(*, dry_run: bool = False, force: bool = False) -> ObservationReport:
     settings = get_settings()
     artifacts_dir, logs_dir = _ensure_dirs()
@@ -175,6 +199,7 @@ def run_daily_price_observation(*, dry_run: bool = False, force: bool = False) -
     network_failed = 0
     observations_published = 0
     observations_internal_only = 0
+    failure_details: list[FailureDetail] = []
     warnings: list[str] = []
     errors: list[str] = []
 
@@ -194,6 +219,7 @@ def run_daily_price_observation(*, dry_run: bool = False, force: bool = False) -
                 network_failed=0,
                 observations_published=0,
                 observations_internal_only=0,
+                failure_details=[],
                 warnings=warnings,
                 errors=errors,
             )
@@ -222,6 +248,16 @@ def run_daily_price_observation(*, dry_run: bool = False, force: bool = False) -
                 row.last_attempt_at = utcnow()
                 row.last_error = "No product_url configured."
                 row.policy_status = "unconfigured"
+                failure_details.append(
+                    FailureDetail(
+                        retailer=row.retailer_slug,
+                        product=row.canonical_product_name,
+                        url="",
+                        failure_type=BLOCKED_BY_POLICY,
+                        suggested_safe_action=_safe_action_for_failure(BLOCKED_BY_POLICY),
+                        error="No product_url configured.",
+                    )
+                )
                 continue
 
             if (not force) and (not _is_frequency_allowed(row.last_attempt_at, row.max_frequency_hours)):
@@ -240,6 +276,16 @@ def run_daily_price_observation(*, dry_run: bool = False, force: bool = False) -
                 row.last_attempt_at = utcnow()
                 row.last_error = f"No adapter for retailer slug '{row.retailer_slug}'."
                 row.policy_status = "blocked_by_policy"
+                failure_details.append(
+                    FailureDetail(
+                        retailer=row.retailer_slug,
+                        product=row.canonical_product_name,
+                        url=row.product_url,
+                        failure_type=BLOCKED_BY_POLICY,
+                        suggested_safe_action=_safe_action_for_failure(BLOCKED_BY_POLICY),
+                        error=row.last_error,
+                    )
+                )
                 continue
 
             allowed, policy_reason = _check_policy_and_robots(
@@ -254,6 +300,16 @@ def run_daily_price_observation(*, dry_run: bool = False, force: bool = False) -
                 row.last_error = policy_reason
                 warnings.append(
                     f"Policy blocked {row.retailer_slug}/{row.canonical_product_name}: {policy_reason}"
+                )
+                failure_details.append(
+                    FailureDetail(
+                        retailer=row.retailer_slug,
+                        product=row.canonical_product_name,
+                        url=row.product_url,
+                        failure_type=BLOCKED_BY_POLICY,
+                        suggested_safe_action=_safe_action_for_failure(BLOCKED_BY_POLICY),
+                        error=policy_reason,
+                    )
                 )
                 continue
 
@@ -311,6 +367,11 @@ def run_daily_price_observation(*, dry_run: bool = False, force: bool = False) -
                 row.last_error = None
                 continue
 
+            if result.status == OUTCOME_DRY_RUN:
+                if result.warnings:
+                    warnings.extend(result.warnings)
+                continue
+
             if result.status == OUTCOME_BLOCKED_ACCESS:
                 blocked_by_access += 1
                 row.last_error = result.error_message or "Access blocked"
@@ -327,6 +388,16 @@ def run_daily_price_observation(*, dry_run: bool = False, force: bool = False) -
 
             if result.warnings:
                 warnings.extend(result.warnings)
+            failure_details.append(
+                FailureDetail(
+                    retailer=row.retailer_slug,
+                    product=row.canonical_product_name,
+                    url=row.product_url,
+                    failure_type=result.status,
+                    suggested_safe_action=_safe_action_for_failure(result.status),
+                    error=row.last_error,
+                )
+            )
 
         finish = utcnow()
         status = "success"
@@ -345,6 +416,7 @@ def run_daily_price_observation(*, dry_run: bool = False, force: bool = False) -
             network_failed=network_failed,
             observations_published=observations_published,
             observations_internal_only=observations_internal_only,
+            failure_details=[asdict(item) for item in failure_details],
             warnings=warnings,
             errors=errors,
         )
@@ -370,6 +442,7 @@ def run_daily_price_observation(*, dry_run: bool = False, force: bool = False) -
                     "observations_internal_only": observations_internal_only,
                     "last_issue_url": None,
                     "dry_run": dry_run,
+                    "failure_details": [asdict(item) for item in failure_details],
                 }
             ),
         )
@@ -410,6 +483,7 @@ def run_daily_price_observation(*, dry_run: bool = False, force: bool = False) -
             network_failed=network_failed,
             observations_published=observations_published,
             observations_internal_only=observations_internal_only,
+            failure_details=[asdict(item) for item in failure_details],
             warnings=warnings,
             errors=errors,
         )

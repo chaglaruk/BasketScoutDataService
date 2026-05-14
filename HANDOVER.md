@@ -170,3 +170,13 @@ Implemented GitHub-hosted daily tracked web observation pipeline:
 - Added policy/runbook/results documentation for non-bypass, low-risk operation.
 
 Current watchlist seeds are intentionally unconfigured (`enabled=false`, no exact URL) until safe exact URLs are explicitly documented.
+
+## Milestone 27C Guncellemesi
+
+- Watchlist CSV import/export araci eklendi:
+  - `python -m app.scripts.import_web_price_watchlist <csv_path>`
+  - `python -m app.scripts.export_web_price_watchlist [--template]`
+- 4 perakendeci x 8 hedef urun icin baslangic watchlist CSV'si eklendi.
+- URL politikasi uygulandi: dokumante edilmis kesin urun URL'si olmayan satirlar `enabled=false` kalir ve not ile isaretlenir.
+- Gunluk observation issue icerigi artik `retailer/product/url/failure_type/suggested_safe_action` alanlarini icerir.
+- Provider status cevabina `configured_url_count`, `missing_url_count`, `last_attempted_urls`, `last_successful_observations` alanlari eklendi.

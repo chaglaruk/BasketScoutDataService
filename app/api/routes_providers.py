@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.core.time import utcnow
 from app.domain.models import ProviderRealityItem, ProvidersRealityResponse, ProviderStatusItem
@@ -17,10 +17,14 @@ class ProvidersStatusResponse(BaseModel):
     providers: list[ProviderStatusItem]
     daily_job_last_run_at: str | None = None
     enabled_watchlist_count: int = 0
+    configured_url_count: int = 0
+    missing_url_count: int = 0
     successful_observations: int = 0
     blocked_count: int = 0
     parse_failed_count: int = 0
     internal_only_count: int = 0
+    last_attempted_urls: list[str] = Field(default_factory=list)
+    last_successful_observations: list[str] = Field(default_factory=list)
     last_report_path: str | None = None
     last_issue_url: str | None = None
 
@@ -34,10 +38,14 @@ def providers_status() -> ProvidersStatusResponse:
         providers=registry.all_statuses(),
         daily_job_last_run_at=snapshot.daily_job_last_run_at,
         enabled_watchlist_count=snapshot.enabled_watchlist_count,
+        configured_url_count=snapshot.configured_url_count,
+        missing_url_count=snapshot.missing_url_count,
         successful_observations=snapshot.successful_observations,
         blocked_count=snapshot.blocked_count,
         parse_failed_count=snapshot.parse_failed_count,
         internal_only_count=snapshot.internal_only_count,
+        last_attempted_urls=snapshot.last_attempted_urls,
+        last_successful_observations=snapshot.last_successful_observations,
         last_report_path=snapshot.last_report_path,
         last_issue_url=snapshot.last_issue_url,
     )

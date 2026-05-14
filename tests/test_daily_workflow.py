@@ -21,3 +21,7 @@ def test_daily_workflow_uploads_artifacts_and_creates_issue():
     assert 'actions/upload-artifact@v4' in workflow
     assert 'Create or update attention issue' in workflow
     assert 'BasketScout daily price observation needs attention' in workflow
+    assert 'retailer=${item.retailer}' in workflow
+    assert 'product=${item.product}' in workflow
+    assert 'url=${item.url' in workflow
+    assert 'suggested_safe_action=${item.suggested_safe_action}' in workflow

@@ -1,0 +1,33 @@
+﻿retailer_slug,retailer_name,canonical_product_name,product_url,expected_product_keywords,enabled,max_frequency_hours,policy_status,public_display_allowed,notes
+tesco,Tesco,milk,,milk,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+tesco,Tesco,bread,,bread,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+tesco,Tesco,eggs,,eggs,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+tesco,Tesco,bananas,,bananas,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+tesco,Tesco,pasta,,pasta,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+tesco,Tesco,rice,,rice,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+tesco,Tesco,chicken breast,,chicken breast,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+tesco,Tesco,toilet roll,,toilet roll,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+aldi,Aldi,milk,,milk,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+aldi,Aldi,bread,,bread,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+aldi,Aldi,eggs,,eggs,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+aldi,Aldi,bananas,,bananas,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+aldi,Aldi,pasta,,pasta,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+aldi,Aldi,rice,,rice,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+aldi,Aldi,chicken breast,,chicken breast,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+aldi,Aldi,toilet roll,,toilet roll,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+sainsburys,Sainsbury's,milk,,milk,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+sainsburys,Sainsbury's,bread,,bread,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+sainsburys,Sainsbury's,eggs,,eggs,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+sainsburys,Sainsbury's,bananas,,bananas,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+sainsburys,Sainsbury's,pasta,,pasta,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+sainsburys,Sainsbury's,rice,,rice,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+sainsburys,Sainsbury's,chicken breast,,chicken breast,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+sainsburys,Sainsbury's,toilet roll,,toilet roll,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+lidl,Lidl,milk,,milk,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+lidl,Lidl,bread,,bread,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+lidl,Lidl,eggs,,eggs,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+lidl,Lidl,bananas,,bananas,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+lidl,Lidl,pasta,,pasta,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+lidl,Lidl,rice,,rice,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+lidl,Lidl,chicken breast,,chicken breast,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.
+lidl,Lidl,toilet roll,,toilet roll,false,24,unconfigured,false,Exact product URL required; not found in repository docs/samples.

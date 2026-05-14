@@ -131,7 +131,12 @@ jobs:
               `- observations_published: ${report.observations_published}`,
               `- observations_internal_only: ${report.observations_internal_only}`,
               '',
-              'Failure types and warnings:',
+              'Failure details:',
+              ...((report.failure_details || []).map(item =>
+                `- retailer=${item.retailer} | product=${item.product} | url=${item.url || '(empty)'} | failure=${item.failure_type} | suggested_safe_action=${item.suggested_safe_action} | error=${item.error || ''}`
+              )),
+              '',
+              'Warnings and errors:',
               ...((report.warnings || []).map(w => `- warning: ${w}`)),
               ...((report.errors || []).map(e => `- error: ${e}`)),
               '',

@@ -210,6 +210,37 @@ class WebPriceWatchlistRepository:
             or 0
         )
 
+    def count_with_url(self) -> int:
+        return int(
+            self.db.scalar(
+                select(func.count()).select_from(WebPriceWatchlist).where(
+                    WebPriceWatchlist.product_url.is_not(None),
+                    WebPriceWatchlist.product_url != "",
+                )
+            )
+            or 0
+        )
+
+    def count_missing_url(self) -> int:
+        return int(
+            self.db.scalar(
+                select(func.count()).select_from(WebPriceWatchlist).where(
+                    (WebPriceWatchlist.product_url.is_(None)) | (WebPriceWatchlist.product_url == "")
+                )
+            )
+            or 0
+        )
+
+    def get_recent_attempts(self, limit: int = 10) -> list[WebPriceWatchlist]:
+        return list(
+            self.db.scalars(
+                select(WebPriceWatchlist)
+                .where(WebPriceWatchlist.last_attempt_at.is_not(None))
+                .order_by(WebPriceWatchlist.last_attempt_at.desc())
+                .limit(limit)
+            )
+        )
+
     def upsert(
         self,
         retailer_slug: str,
@@ -303,6 +334,16 @@ class PriceObservationRepository:
                     PriceObservation.public_display_allowed.is_(True),
                     PriceObservation.stock_status == "Unknown",
                 )
+                .order_by(PriceObservation.observed_at.desc())
+                .limit(limit)
+            )
+        )
+
+    def get_recent_success(self, limit: int = 10) -> list[PriceObservation]:
+        return list(
+            self.db.scalars(
+                select(PriceObservation)
+                .where(PriceObservation.outcome_status == "SUCCESS")
                 .order_by(PriceObservation.observed_at.desc())
                 .limit(limit)
             )

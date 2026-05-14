@@ -68,7 +68,11 @@ def test_providers_status_includes_daily_observation_summary():
     data = r.json()
     assert "daily_job_last_run_at" in data
     assert "enabled_watchlist_count" in data
+    assert "configured_url_count" in data
+    assert "missing_url_count" in data
     assert "successful_observations" in data
     assert "blocked_count" in data
     assert "parse_failed_count" in data
     assert "internal_only_count" in data
+    assert "last_attempted_urls" in data
+    assert "last_successful_observations" in data

@@ -34,6 +34,7 @@ def main() -> int:
         "network_failed": report.network_failed,
         "observations_published": report.observations_published,
         "observations_internal_only": report.observations_internal_only,
+        "failure_details": report.failure_details,
         "warnings": report.warnings,
         "errors": report.errors,
     }, indent=2))

@@ -85,3 +85,25 @@ Workflow: `.github/workflows/daily-price-observation.yml`
 - `workflow_dispatch` ile manuel tetiklenir.
 - Uyari/hata varsa `BasketScout daily price observation needs attention` issue'su create/update edilir.
 - Hatirlatma: Stock Unknown kalir, bypass denenmez.
+
+## 9. Watchlist Import/Export CLI
+
+Template olustur/export:
+
+```powershell
+python -m app.scripts.export_web_price_watchlist --template --output data/web_observation/watchlist_template.csv
+```
+
+Mevcut watchlist export:
+
+```powershell
+python -m app.scripts.export_web_price_watchlist --output data/web_observation/current_watchlist.csv
+```
+
+CSV import:
+
+```powershell
+python -m app.scripts.import_web_price_watchlist data/web_observation/starter_watchlist.csv
+```
+
+Kural: `enabled=true` icin `product_url` zorunlu ve http/https olmalidir.

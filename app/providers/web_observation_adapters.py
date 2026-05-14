@@ -16,6 +16,7 @@ OUTCOME_SUCCESS = "SUCCESS"
 OUTCOME_BLOCKED_ACCESS = "BLOCKED_BY_ACCESS_CONTROL"
 OUTCOME_PARSE_FAILED = "PARSE_FAILED"
 OUTCOME_NETWORK_FAILED = "NETWORK_FAILED"
+OUTCOME_DRY_RUN = "DRY_RUN_SKIPPED"
 
 _BLOCK_PATTERNS = (
     "captcha",
@@ -69,7 +70,7 @@ class BaseWebObservationAdapter:
         now = datetime.now(UTC)
         if dry_run:
             return AdapterObservationResult(
-                status=OUTCOME_PARSE_FAILED,
+                status=OUTCOME_DRY_RUN,
                 observed_at=now,
                 captured_at=now,
                 warnings=["Dry-run mode: no network call was made."],
