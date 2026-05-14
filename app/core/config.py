@@ -48,6 +48,10 @@ class Settings(BaseSettings):
     web_observation_user_agent: str = (
         "BasketScoutDataService-WebObservation/0.1.0 (public-page-safe; contact@example.com)"
     )
+    scrapling_enabled: bool = True
+    scrapling_network_enabled: bool = True
+    scrapling_timeout_seconds: float = 12.0
+    scrapling_public_confidence_threshold: float = 0.75
 
     # Open Food Facts
     off_user_agent: str = "BasketScoutDataService/0.1.0 (contact@example.com)"

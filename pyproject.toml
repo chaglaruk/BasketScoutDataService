@@ -33,6 +33,12 @@ dev = [
     "ruff>=0.4.0",
     "respx>=0.21.0",
 ]
+scrapling = [
+    "scrapling>=0.4.8",
+]
+scrapling-fetchers = [
+    "scrapling[fetchers]>=0.4.8",
+]
 
 [tool.setuptools.packages.find]
 where = ["."]

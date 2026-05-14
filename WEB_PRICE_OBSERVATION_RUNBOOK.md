@@ -14,6 +14,13 @@ Normal mod:
 python -m app.scripts.run_daily_price_observation
 ```
 
+Scrapling (deneysel) mod:
+
+```powershell
+python -m app.scripts.run_daily_price_observation --provider scrapling --dry-run
+python -m app.scripts.run_daily_price_observation --provider scrapling --force
+```
+
 ## 2. Watchlist Yonetimi
 
 Watchlist goruntuleme:

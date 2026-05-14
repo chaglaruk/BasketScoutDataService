@@ -14,6 +14,12 @@ from app.domain.models import ManualCsvValidationReport, ManualImportSummary, Ma
 from app.services.manual_import_service import ManualImportService
 from app.services.provider_registry import get_registry
 from app.services.refresh_service import RefreshService
+from app.services.scrapling_price_observation_service import (
+    report_to_dict as scrapling_report_to_dict,
+)
+from app.services.scrapling_price_observation_service import (
+    run_scrapling_price_observation,
+)
 from app.services.web_price_observation_service import report_to_dict, run_daily_price_observation
 
 header_scheme = APIKeyHeader(name="X-Admin-Token", auto_error=False)
@@ -104,6 +110,7 @@ class WebWatchlistUpsertRequest(BaseModel):
 
 
 class DailyObservationRunRequest(BaseModel):
+    provider: str = "default"
     dry_run: bool = False
     force: bool = False
 
@@ -265,5 +272,8 @@ def upsert_web_watchlist(item: WebWatchlistUpsertRequest) -> WebWatchlistItemRes
 
 @router.post("/daily-observation/run")
 def run_daily_observation(body: DailyObservationRunRequest) -> dict:
+    if body.provider == "scrapling":
+        report = run_scrapling_price_observation(dry_run=body.dry_run, force=body.force)
+        return scrapling_report_to_dict(report)
     report = run_daily_price_observation(dry_run=body.dry_run, force=body.force)
     return report_to_dict(report)

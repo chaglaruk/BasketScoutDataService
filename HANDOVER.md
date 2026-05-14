@@ -194,3 +194,19 @@ Current watchlist seeds are intentionally unconfigured (`enabled=false`, no exac
   - `blocked_by_policy_count`
   - `blocked_by_access_count`
 - Tum web observation kayitlari icin stock `Unknown` kalir; public compare icin `public_display_allowed=true` onayi gereklidir.
+
+## Milestone 27E Guncellemesi
+
+- Scrapling lab icin yeni servis eklendi:
+  - `app/services/scrapling_price_observation_service.py`
+  - `app/providers/scrapling_observation_provider.py`
+- Gunluk script provider secimi alir:
+  - `python -m app.scripts.run_daily_price_observation --provider default|scrapling`
+- Scrapling config bayraklari eklendi:
+  - `SCRAPLING_ENABLED` (default `true`)
+  - `SCRAPLING_NETWORK_ENABLED` (default `true`)
+  - `SCRAPLING_TIMEOUT_SECONDS`
+  - `SCRAPLING_PUBLIC_CONFIDENCE_THRESHOLD`
+- `/providers/status` Scrapling availability ve run metrikleri ile genisletildi.
+- Fixture tabanli parser testleri eklendi (`tests/fixtures/scrapling/*`).
+- SAFE policy korundu: login/captcha/proxy/stealth/private API bypass yok, stock `Unknown`.

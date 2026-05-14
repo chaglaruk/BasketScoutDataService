@@ -55,6 +55,7 @@ def test_providers_reality_endpoint():
     assert providers["manual_import"]["can_provide_price"] == "yes"
     assert providers["manual_import"]["can_provide_stock"] == "no"
     assert providers["web_observation"]["can_provide_price"] == "partial"
+    assert providers["scrapling_observation"]["can_provide_price"] == "partial"
     assert providers["open_food_facts"]["can_provide_price"] == "no"
     assert providers["open_prices"]["can_provide_price"] == "partial"
     assert providers["tesco"]["can_provide_stock"] == "no"
@@ -79,5 +80,13 @@ def test_providers_status_includes_daily_observation_summary():
     assert "blocked_count" in data
     assert "parse_failed_count" in data
     assert "internal_only_count" in data
+    assert "scrapling_enabled" in data
+    assert "scrapling_network_enabled" in data
+    assert "scrapling_available" in data
+    assert "scrapling_last_run_at" in data
+    assert "scrapling_blocked_count" in data
+    assert "scrapling_parse_failed_count" in data
+    assert "scrapling_internal_only_count" in data
+    assert "scrapling_public_eligible_count" in data
     assert "last_attempted_urls" in data
     assert "last_successful_observations" in data

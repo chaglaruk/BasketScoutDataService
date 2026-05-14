@@ -25,3 +25,4 @@ def test_daily_workflow_uploads_artifacts_and_creates_issue():
     assert 'product=${item.product}' in workflow
     assert 'url=${item.url' in workflow
     assert 'suggested_safe_action=${item.suggested_safe_action}' in workflow
+    assert 'SCRAPLING_ENABLED' in workflow

@@ -1,4 +1,4 @@
-fastapi>=0.111.0
+﻿fastapi>=0.111.0
 uvicorn[standard]>=0.30.0
 sqlalchemy>=2.0.0
 pydantic>=2.7.0
@@ -9,6 +9,10 @@ lxml>=5.2.0
 apscheduler>=3.10.4
 python-dotenv>=1.0.0
 python-multipart>=0.0.9
+
+# Optional Scrapling lab dependency (install manually when needed):
+#   pip install "scrapling>=0.4.8"
+#   pip install "scrapling[fetchers]>=0.4.8"
 
 # Geliştirme bağımlılıkları
 pytest>=8.2.0

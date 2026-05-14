@@ -168,3 +168,24 @@ Ilk real deneme sonucu:
 - `blocked_by_access=1`
 - Stock: `Unknown`
 - Public compare icin uygun web observation yok (`public_display_allowed=true` kayit yok).
+
+## Milestone 27E Scrapling Lab Update (2026-05-14)
+
+Yeni provider:
+
+- `scrapling_observation` (safe lab mode)
+
+Status ozeti:
+
+- `scrapling_enabled`: config flag
+- `scrapling_network_enabled`: config flag
+- `scrapling_available`: parser runtime import durumu
+- `scrapling_fetcher_available`, `scrapling_dynamic_fetcher_available`, `scrapling_stealthy_fetcher_available`: capability gorunurlugu
+- `scrapling_last_run_at`, `scrapling_blocked_count`, `scrapling_parse_failed_count`, `scrapling_internal_only_count`, `scrapling_public_eligible_count`
+
+Politika:
+
+- No login/captcha/proxy/stealth bypass.
+- No private API.
+- Exact watchlist URL only.
+- Stock her zaman `Unknown`.

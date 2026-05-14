@@ -155,3 +155,25 @@ Observation docs:
 - `WEB_PRICE_OBSERVATION_POLICY.md`
 - `WEB_PRICE_OBSERVATION_RUNBOOK.md`
 - `WEB_PRICE_OBSERVATION_RESULTS.md`
+
+## Scrapling Lab (Milestone 27E)
+
+- AmaÃ§: parser dayanÄ±klÄ±lÄ±ÄŸÄ±nÄ± artÄ±rmak iÃ§in Scrapling tabanlÄ± deneysel gÃ¶zlem yolu.
+- GÃ¼venli kapsam: exact watchlist URL, public sayfa, dÃ¼ÅŸÃ¼k frekans, internal-only varsayÄ±lan.
+- Yasak: login/captcha/proxy/stealth bypass/private API.
+- Komut:
+  - `python -m app.scripts.run_daily_price_observation --provider scrapling --dry-run`
+  - `python -m app.scripts.run_daily_price_observation --provider scrapling --force`
+
+Opsiyonel kurulum:
+
+```powershell
+pip install "scrapling>=0.4.8"
+# fetcher class'lari da gerekirse:
+pip install "scrapling[fetchers]>=0.4.8"
+```
+
+Politika ve degerlendirme:
+
+- `SCRAPLING_EVALUATION.md`
+- `SCRAPLING_USAGE_POLICY.md`

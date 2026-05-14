@@ -21,6 +21,7 @@ from app.providers.retailers.morrisons_provider import MorrisonsProvider
 from app.providers.retailers.sainsburys_provider import SainsburysProvider
 from app.providers.retailers.tesco_provider import TescoProvider
 from app.providers.retailers.waitrose_provider import WaitroseProvider
+from app.providers.scrapling_observation_provider import ScraplingObservationProvider
 from app.providers.web_observation_provider import WebObservationProvider
 
 logger = logging.getLogger(__name__)
@@ -51,6 +52,7 @@ class ProviderRegistry:
         candidates: list[BaseProvider] = [
             ManualImportProvider(),
             WebObservationProvider(),
+            ScraplingObservationProvider(),
             OpenPricesProvider(),
             TescoProvider(),
             OpenFoodFactsProvider(),

@@ -28,6 +28,18 @@ class ProvidersStatusResponse(BaseModel):
     blocked_count: int = 0
     parse_failed_count: int = 0
     internal_only_count: int = 0
+    scrapling_enabled: bool = True
+    scrapling_network_enabled: bool = True
+    scrapling_available: bool = False
+    scrapling_fetcher_available: bool = False
+    scrapling_dynamic_fetcher_available: bool = False
+    scrapling_stealthy_fetcher_available: bool = False
+    scrapling_last_run_at: str | None = None
+    scrapling_blocked_count: int = 0
+    scrapling_parse_failed_count: int = 0
+    scrapling_internal_only_count: int = 0
+    scrapling_public_eligible_count: int = 0
+    scrapling_warning: str | None = None
     last_attempted_urls: list[str] = Field(default_factory=list)
     last_successful_observations: list[str] = Field(default_factory=list)
     last_report_path: str | None = None
@@ -54,6 +66,18 @@ def providers_status() -> ProvidersStatusResponse:
         blocked_count=snapshot.blocked_count,
         parse_failed_count=snapshot.parse_failed_count,
         internal_only_count=snapshot.internal_only_count,
+        scrapling_enabled=snapshot.scrapling_enabled,
+        scrapling_network_enabled=snapshot.scrapling_network_enabled,
+        scrapling_available=snapshot.scrapling_available,
+        scrapling_fetcher_available=snapshot.scrapling_fetcher_available,
+        scrapling_dynamic_fetcher_available=snapshot.scrapling_dynamic_fetcher_available,
+        scrapling_stealthy_fetcher_available=snapshot.scrapling_stealthy_fetcher_available,
+        scrapling_last_run_at=snapshot.scrapling_last_run_at,
+        scrapling_blocked_count=snapshot.scrapling_blocked_count,
+        scrapling_parse_failed_count=snapshot.scrapling_parse_failed_count,
+        scrapling_internal_only_count=snapshot.scrapling_internal_only_count,
+        scrapling_public_eligible_count=snapshot.scrapling_public_eligible_count,
+        scrapling_warning=snapshot.scrapling_warning,
         last_attempted_urls=snapshot.last_attempted_urls,
         last_successful_observations=snapshot.last_successful_observations,
         last_report_path=snapshot.last_report_path,
@@ -69,6 +93,7 @@ def providers_reality() -> ProvidersRealityResponse:
     implemented_names = [
         "manual_import",
         "web_observation",
+        "scrapling_observation",
         "open_food_facts",
         "open_prices",
         "tesco",
@@ -156,6 +181,18 @@ def _reality_from_status(status: ProviderStatusItem) -> ProviderRealityItem:
             legal_safety_constraints="Tracked URLs only. No login/captcha/WAF bypass.",
             blocked_reason=None if status.status == "ok" else status.message,
             next_safe_step="Enable only policy-verified URLs with public_display_allowed=true.",
+        )
+    if status.name == "scrapling_observation":
+        return ProviderRealityItem(
+            name=status.name,
+            implementation_status=status.status,
+            can_provide_price="partial",
+            can_provide_stock="no",
+            data_freshness="daily observed web page (safe mode)",
+            confidence="low-medium",
+            legal_safety_constraints="Safe mode only. No login/captcha/proxy/stealth bypass.",
+            blocked_reason=None if status.status == "ok" else status.message,
+            next_safe_step="Use fixture-driven parser hardening and policy-approved exact URLs only.",
         )
     if status.name == "tesco":
         return ProviderRealityItem(

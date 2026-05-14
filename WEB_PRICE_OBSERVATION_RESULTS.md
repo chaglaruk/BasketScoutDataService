@@ -62,3 +62,18 @@ Calisma sonucu:
 - Dry-run: `urls_attempted=1`, `prices_observed=0`, hata yok.
 - Real-run: `urls_attempted=1`, `prices_observed=0`, `blocked_by_access=1` (Aldi sayfa iceriginde access-control marker).
 - `public_display_allowed=true` satir yok; kullanici-facing compare'e yayinlanan web observation yok.
+
+## Milestone 27E - Scrapling Lab Controlled Run (2026-05-14)
+
+- `--provider scrapling --dry-run --force` (SCRAPLING_ENABLED=false):
+  - `urls_attempted=0`, warning: provider disabled.
+- `--provider scrapling --dry-run --force` (SCRAPLING_ENABLED=true):
+  - `urls_attempted=1`, network call yok (dry-run).
+- `--provider scrapling --force` (SCRAPLING_ENABLED=true):
+  - `urls_attempted=1`
+  - `prices_observed=0`
+  - `blocked_by_access=1` (Aldi URL access-control marker)
+  - `public_eligible=0`
+
+Not:
+- Fetcher/Dynamic/Stealthy capability runtime'da tespit edilir; bu milestone'da bypass amacli kullanilmamistir.

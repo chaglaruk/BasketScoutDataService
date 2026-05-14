@@ -37,6 +37,8 @@ jobs:
           DATABASE_URL: sqlite:///./data/test.db
           DEFAULT_PROVIDER: mock
           ENABLE_SCRAPING: "false"
+          SCRAPLING_ENABLED: "${{ vars.SCRAPLING_ENABLED || 'false' }}"
+          SCRAPLING_NETWORK_ENABLED: "false"
 
       - name: Run daily observation job
         run: python -m app.scripts.run_daily_price_observation
@@ -44,6 +46,8 @@ jobs:
           ENV: production
           DEBUG: "false"
           ENABLE_SCRAPING: "false"
+          SCRAPLING_ENABLED: "${{ vars.SCRAPLING_ENABLED || 'false' }}"
+          SCRAPLING_NETWORK_ENABLED: "false"
 
       - name: Build observation summary
         id: summary

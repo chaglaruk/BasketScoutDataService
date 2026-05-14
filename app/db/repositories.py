@@ -322,6 +322,8 @@ class PriceObservationRepository:
                 .where(
                     PriceObservation.outcome_status == "SUCCESS",
                     PriceObservation.public_display_allowed.is_(True),
+                    PriceObservation.rights_status == "public_allowed",
+                    PriceObservation.confidence_score >= 0.75,
                     PriceObservation.stock_status == "Unknown",
                 )
                 .order_by(PriceObservation.observed_at.desc())
@@ -344,6 +346,8 @@ class PriceObservationRepository:
                 .where(
                     PriceObservation.outcome_status == "SUCCESS",
                     PriceObservation.public_display_allowed.is_(True),
+                    PriceObservation.rights_status == "public_allowed",
+                    PriceObservation.confidence_score >= 0.75,
                     PriceObservation.stock_status == "Unknown",
                 )
                 .order_by(PriceObservation.observed_at.desc())

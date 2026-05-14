@@ -6,12 +6,14 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from app.core.config import get_settings
 from app.db.database import SessionLocal, get_engine
 from app.db.repositories import (
     PriceObservationRepository,
     ProviderRunRepository,
     WebPriceWatchlistRepository,
 )
+from app.services.scrapling_price_observation_service import get_scrapling_runtime
 
 
 @dataclass(frozen=True)
@@ -31,11 +33,32 @@ class ObservationStatusSnapshot:
     internal_only_count: int
     last_report_path: str | None
     last_issue_url: str | None
+    scrapling_enabled: bool
+    scrapling_network_enabled: bool
+    scrapling_available: bool
+    scrapling_fetcher_available: bool
+    scrapling_dynamic_fetcher_available: bool
+    scrapling_stealthy_fetcher_available: bool
+    scrapling_last_run_at: str | None
+    scrapling_blocked_count: int
+    scrapling_parse_failed_count: int
+    scrapling_internal_only_count: int
+    scrapling_public_eligible_count: int
+    scrapling_warning: str | None
     last_attempted_urls: list[str] = field(default_factory=list)
     last_successful_observations: list[str] = field(default_factory=list)
 
 
 def get_observation_status_snapshot() -> ObservationStatusSnapshot:
+    settings = get_settings()
+    (
+        scrapling_available,
+        fetcher_available,
+        dynamic_fetcher_available,
+        stealthy_fetcher_available,
+        scrapling_import_error,
+    ) = get_scrapling_runtime()
+
     SessionLocal.configure(bind=get_engine())
     db = SessionLocal()
     try:
@@ -44,6 +67,7 @@ def get_observation_status_snapshot() -> ObservationStatusSnapshot:
         observation_repo = PriceObservationRepository(db)
 
         last_run = run_repo.get_last_for_provider("daily_web_observation")
+        scrapling_last_run = run_repo.get_last_for_provider("daily_scrapling_observation")
         enabled_count = watch_repo.count_enabled()
         enabled_url_count = watch_repo.count_enabled_with_url()
         configured_url_count = watch_repo.count_with_url()
@@ -68,6 +92,11 @@ def get_observation_status_snapshot() -> ObservationStatusSnapshot:
         report_path: str | None = None
         issue_url: str | None = None
         last_run_at: str | None = None
+        scrapling_last_run_at: str | None = None
+        scrapling_blocked = 0
+        scrapling_parse_failed = 0
+        scrapling_internal_only = 0
+        scrapling_public_eligible = 0
 
         if last_run is not None:
             last_run_at = (last_run.finished_at or last_run.started_at).isoformat()
@@ -83,6 +112,22 @@ def get_observation_status_snapshot() -> ObservationStatusSnapshot:
                     internal_only = int(payload.get("observations_internal_only", 0))
                     report_path = payload.get("report_path")
                     issue_url = payload.get("last_issue_url")
+                except Exception:  # noqa: BLE001
+                    pass
+
+        if scrapling_last_run is not None:
+            scrapling_last_run_at = (
+                scrapling_last_run.finished_at or scrapling_last_run.started_at
+            ).isoformat()
+            if scrapling_last_run.message:
+                try:
+                    payload = json.loads(scrapling_last_run.message)
+                    scrapling_blocked = int(payload.get("blocked_by_policy", 0)) + int(
+                        payload.get("blocked_by_access", 0)
+                    )
+                    scrapling_parse_failed = int(payload.get("parse_failed", 0))
+                    scrapling_internal_only = int(payload.get("internal_only", 0))
+                    scrapling_public_eligible = int(payload.get("public_eligible", 0))
                 except Exception:  # noqa: BLE001
                     pass
 
@@ -109,6 +154,22 @@ def get_observation_status_snapshot() -> ObservationStatusSnapshot:
             last_successful_observations=last_successful_observations,
             last_report_path=report_path,
             last_issue_url=issue_url,
+            scrapling_enabled=settings.scrapling_enabled,
+            scrapling_network_enabled=settings.scrapling_network_enabled,
+            scrapling_available=scrapling_available,
+            scrapling_fetcher_available=fetcher_available,
+            scrapling_dynamic_fetcher_available=dynamic_fetcher_available,
+            scrapling_stealthy_fetcher_available=stealthy_fetcher_available,
+            scrapling_last_run_at=scrapling_last_run_at,
+            scrapling_blocked_count=scrapling_blocked,
+            scrapling_parse_failed_count=scrapling_parse_failed,
+            scrapling_internal_only_count=scrapling_internal_only,
+            scrapling_public_eligible_count=scrapling_public_eligible,
+            scrapling_warning=(
+                None
+                if scrapling_available
+                else f"Scrapling parser unavailable: {scrapling_import_error}"
+            ),
         )
     finally:
         db.close()
