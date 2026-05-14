@@ -1,13 +1,13 @@
-"""
+﻿"""
 Scrapling tabanlı çok-market fiyat sağlayıcı.
 Tesco SSR-rendered sayfalarından veri çeker.
 """
 import json
-import time
 import logging
-from datetime import datetime, timezone
+import time
+from contextlib import suppress
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Iterator
 
 logger = logging.getLogger(__name__)
 
@@ -65,10 +65,8 @@ def scrape_retailer(retailer: str, query: str, delay: float = 2.0) -> list[dict]
                 if name and price:
                     # "£1.65" → 1.65
                     price_val = None
-                    try:
+                    with suppress(ValueError):
                         price_val = float(price.replace("£", "").strip())
-                    except ValueError:
-                        pass
 
                     results.append({
                         "retailer": retailer,
@@ -78,7 +76,7 @@ def scrape_retailer(retailer: str, query: str, delay: float = 2.0) -> list[dict]
                         "unit_price": unit.strip() if unit else None,
                         "url": link,
                         "query": query,
-                        "scraped_at": datetime.now(timezone.utc).isoformat(),
+                        "scraped_at": datetime.now(UTC).isoformat(),
                     })
 
             page += 1
@@ -101,7 +99,7 @@ def run_full_scrape(
     queries = queries or SEARCH_TERMS
 
     all_results = []
-    stats = {"started_at": datetime.now(timezone.utc).isoformat(), "counts": {}}
+    stats = {"started_at": datetime.now(UTC).isoformat(), "counts": {}}
 
     for retailer in retailers:
         stats["counts"][retailer] = 0
@@ -118,7 +116,7 @@ def run_full_scrape(
         json.dump({"stats": stats, "products": all_results}, f, indent=2, ensure_ascii=False)
 
     stats["total"] = len(all_results)
-    stats["finished_at"] = datetime.now(timezone.utc).isoformat()
+    stats["finished_at"] = datetime.now(UTC).isoformat()
     logger.info(f"Scrape tamamlandi: {stats['total']} urun → {output_path}")
     return stats
 

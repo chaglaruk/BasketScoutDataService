@@ -1,0 +1,81 @@
+﻿name: Daily Scrape
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (sadece Tesco/milk test)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.11 kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Bagimliliklari yukle
+        continue-on-error: true
+        run: |
+          pip install -r requirements.txt
+          pip install "scrapling[fetchers]>=0.4.8"
+          python - <<'PY'
+          try:
+              from scrapling.cli import install
+              install([], standalone_mode=False)
+              print("Scrapling browser deps installed.")
+          except Exception as exc:
+              print(f"Scrapling browser deps skipped: {exc}")
+          PY
+
+      - name: Scrape calistir (dry-run)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        continue-on-error: true
+        run: |
+          python -c "
+          try:
+              from app.providers.scrapling_provider import scrape_retailer
+              items = scrape_retailer('tesco', 'milk')
+              print(f'Bulunan: {len(items)} urun')
+              for i in items[:3]:
+                  print(f\"  {i.get('name')} -> {i.get('price_str')} ({i.get('status')})\")
+          except Exception as exc:
+              print(f'Dry-run scrape failed but workflow continues: {exc}')
+          "
+
+      - name: Scrape calistir (full)
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run) }}
+        continue-on-error: true
+        run: |
+          python -c "
+          try:
+              from app.providers.scrapling_provider import run_full_scrape
+              stats = run_full_scrape()
+              print(stats)
+          except Exception as exc:
+              print(f'Full scrape failed but workflow continues: {exc}')
+          "
+
+      - name: Sonuclari artifact olarak yukle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraped-prices-${{ github.run_id }}
+          path: data/scraped_prices.json
+          retention-days: 30
+          if-no-files-found: ignore
