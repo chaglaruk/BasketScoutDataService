@@ -1,0 +1,68 @@
+name: Daily Price Scrape
+
+on:
+  schedule:
+    - cron: '0 4 * * *'   # Her gün saat 04:00 UTC (sabah 7 Türkiye)
+  workflow_dispatch:        # Manuel tetikleme butonu
+    inputs:
+      dry_run:
+        description: 'Dry run (sadece Tesco/milk test)'
+        type: boolean
+        default: true
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.11 kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Bağımlılıkları yükle
+        run: |
+          pip install "scrapling[fetchers]"
+          python -c "from scrapling.cli import install; install([], standalone_mode=False)"
+
+      - name: Sistem bağımlılıkları (Playwright için)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y \
+            libnss3 libatk1.0-0 libatk-bridge2.0-0 \
+            libcups2 libdrm2 libxkbcommon0 libxcomposite1 \
+            libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2
+
+      - name: Scrape çalıştır (dry-run)
+        if: ${{ github.event.inputs.dry_run == 'true' || github.event_name == 'workflow_dispatch' }}
+        run: |
+          python -c "
+          from app.providers.scrapling_provider import scrape_retailer
+          items = scrape_retailer('tesco', 'milk')
+          print(f'Bulunan: {len(items)} urun')
+          for i in items[:3]:
+              print(f\"  {i['name']} → {i['price_str']}\")
+          "
+
+      - name: Scrape çalıştır (full)
+        if: ${{ github.event.inputs.dry_run != 'true' && github.event_name == 'schedule' }}
+        run: |
+          python -c "
+          from app.providers.scrapling_provider import run_full_scrape
+          stats = run_full_scrape()
+          print(stats)
+          "
+
+      - name: Sonuçları artifact olarak yükle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraped-prices-${{ github.run_id }}
+          path: data/scraped_prices.json
+          retention-days: 30
+          if-no-files-found: ignore
