@@ -57,10 +57,19 @@ Ornek body:
 - `GET /providers/status` icindeki daily observation alanlarini kontrol edin:
   - `daily_job_last_run_at`
   - `enabled_watchlist_count`
+  - `enabled_url_count`
+  - `configured_url_count`
+  - `missing_url_count`
+  - `attempted_url_count`
+  - `observed_price_count`
   - `successful_observations`
+  - `blocked_by_policy_count`
+  - `blocked_by_access_count`
   - `blocked_count`
   - `parse_failed_count`
   - `internal_only_count`
+  - `last_attempted_urls`
+  - `last_successful_observations`
   - `last_report_path`
 
 ## 6. Artifact ve Log Dosyalari
@@ -107,3 +116,10 @@ python -m app.scripts.import_web_price_watchlist data/web_observation/starter_wa
 ```
 
 Kural: `enabled=true` icin `product_url` zorunlu ve http/https olmalidir.
+
+## 10. Controlled Exact-URL Seed Notu
+
+- Controlled test icin arastirma dokumaninda gecen exact urun URL'leri ayri bir CSV ile import edilir.
+- `enabled=true` sadece preflight policy/robots kontrolu gecerse kullanilir.
+- `public_display_allowed` varsayilan olarak `false` kalir.
+- Bu adim katalog tarama/crawl degildir; sadece tekil URL gozlemidir.

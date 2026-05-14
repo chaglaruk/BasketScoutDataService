@@ -139,3 +139,32 @@ Validation:
 - No login/captcha/WAF bypass.
 - Stock is always `Unknown`.
 - User-facing compare can use only `public_display_allowed=true` observations.
+
+## Milestone 27D Controlled Observation Update (2026-05-14)
+
+Exact URL seed adimi:
+
+- 4 adet milk URL satiri eklendi (Tesco, Aldi, Sainsbury's, Lidl).
+- Preflight sonucu nedeniyle yalnizca Aldi satiri enabled edildi.
+- Tesco/Sainsbury's/Lidl satirlari policy blokaj notu ile disabled tutuldu.
+
+Beklenen `/providers/status` daily observation alanlari:
+
+- `enabled_watchlist_count`
+- `enabled_url_count`
+- `configured_url_count`
+- `missing_url_count`
+- `attempted_url_count`
+- `observed_price_count`
+- `blocked_by_policy_count`
+- `blocked_by_access_count`
+- `parse_failed_count`
+- `internal_only_count`
+
+Ilk real deneme sonucu:
+
+- `urls_attempted=1` (Aldi)
+- `prices_observed=0`
+- `blocked_by_access=1`
+- Stock: `Unknown`
+- Public compare icin uygun web observation yok (`public_display_allowed=true` kayit yok).

@@ -180,3 +180,17 @@ Current watchlist seeds are intentionally unconfigured (`enabled=false`, no exac
 - URL politikasi uygulandi: dokumante edilmis kesin urun URL'si olmayan satirlar `enabled=false` kalir ve not ile isaretlenir.
 - Gunluk observation issue icerigi artik `retailer/product/url/failure_type/suggested_safe_action` alanlarini icerir.
 - Provider status cevabina `configured_url_count`, `missing_url_count`, `last_attempted_urls`, `last_successful_observations` alanlari eklendi.
+
+## Milestone 27D Guncellemesi
+
+- Arastirma dokumanindan 4 exact milk URL satiri iceren controlled seed CSV eklendi.
+- Preflight policy/robots kontrolu calistirildi; sadece Aldi URL'si enabled edildi.
+- Dry-run ve real-run observation denemesi yapildi.
+- Real-run sonucu: Aldi URL'de `BLOCKED_BY_ACCESS_CONTROL`, gozlemlenen fiyat yok.
+- Provider status alanlari genisletildi:
+  - `enabled_url_count`
+  - `attempted_url_count`
+  - `observed_price_count`
+  - `blocked_by_policy_count`
+  - `blocked_by_access_count`
+- Tum web observation kayitlari icin stock `Unknown` kalir; public compare icin `public_display_allowed=true` onayi gereklidir.

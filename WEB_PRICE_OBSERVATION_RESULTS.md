@@ -40,3 +40,25 @@ Zorunlu alanlar:
 - `blocked_by_access` artarsa retailer erisim kisitina saygi gosterin, bypass denemeyin.
 - `parse_failed` artarsa parser'i guvenli regex seviyesinde iyilestirin.
 - `network_failed` artarsa timeout/erisim kosullarini kontrol edin.
+
+## Milestone 27D - Ilk Controlled Exact-URL Denemesi (2026-05-14)
+
+Seed edilen exact URL satirlari:
+
+- Tesco milk: `https://www.tesco.com/shop/en-GB/products/252207566`
+- Aldi milk: `https://www.aldi.co.uk/product/cowbelle-semi-skimmed-milk-1-7-fat-000000000000416770`
+- Sainsbury's milk: `https://www.sainsburys.co.uk/gol-ui/product/sainsburys-british-whole-milk-2-27l-4-pint`
+- Lidl milk: `https://www.lidl.co.uk/p/milbona-uht-skimmed-milk/p10000029`
+
+Preflight sonucu:
+
+- Tesco: `blocked_by_policy` (robots fetch 403)
+- Aldi: `allowed`
+- Sainsbury's: `blocked_by_policy` (robots fetch 403)
+- Lidl: `blocked_by_policy` (robots fetch SSL verification error)
+
+Calisma sonucu:
+
+- Dry-run: `urls_attempted=1`, `prices_observed=0`, hata yok.
+- Real-run: `urls_attempted=1`, `prices_observed=0`, `blocked_by_access=1` (Aldi sayfa iceriginde access-control marker).
+- `public_display_allowed=true` satir yok; kullanici-facing compare'e yayinlanan web observation yok.

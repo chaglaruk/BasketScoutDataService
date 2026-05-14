@@ -18,9 +18,14 @@ from app.db.repositories import (
 class ObservationStatusSnapshot:
     daily_job_last_run_at: str | None
     enabled_watchlist_count: int
+    enabled_url_count: int
     configured_url_count: int
     missing_url_count: int
+    attempted_url_count: int
+    observed_price_count: int
     successful_observations: int
+    blocked_by_policy_count: int
+    blocked_by_access_count: int
     blocked_count: int
     parse_failed_count: int
     internal_only_count: int
@@ -40,6 +45,7 @@ def get_observation_status_snapshot() -> ObservationStatusSnapshot:
 
         last_run = run_repo.get_last_for_provider("daily_web_observation")
         enabled_count = watch_repo.count_enabled()
+        enabled_url_count = watch_repo.count_enabled_with_url()
         configured_url_count = watch_repo.count_with_url()
         missing_url_count = watch_repo.count_missing_url()
         last_attempted_urls = [
@@ -53,6 +59,9 @@ def get_observation_status_snapshot() -> ObservationStatusSnapshot:
         ]
 
         successful = 0
+        attempted_urls = 0
+        blocked_by_policy = 0
+        blocked_by_access = 0
         blocked = 0
         parse_failed = 0
         internal_only = 0
@@ -65,10 +74,11 @@ def get_observation_status_snapshot() -> ObservationStatusSnapshot:
             if last_run.message:
                 try:
                     payload = json.loads(last_run.message)
+                    attempted_urls = int(payload.get("urls_attempted", 0))
                     successful = int(payload.get("prices_observed", 0))
-                    blocked = int(payload.get("blocked_by_policy", 0)) + int(
-                        payload.get("blocked_by_access", 0)
-                    )
+                    blocked_by_policy = int(payload.get("blocked_by_policy", 0))
+                    blocked_by_access = int(payload.get("blocked_by_access", 0))
+                    blocked = blocked_by_policy + blocked_by_access
                     parse_failed = int(payload.get("parse_failed", 0))
                     internal_only = int(payload.get("observations_internal_only", 0))
                     report_path = payload.get("report_path")
@@ -84,9 +94,14 @@ def get_observation_status_snapshot() -> ObservationStatusSnapshot:
         return ObservationStatusSnapshot(
             daily_job_last_run_at=last_run_at,
             enabled_watchlist_count=enabled_count,
+            enabled_url_count=enabled_url_count,
             configured_url_count=configured_url_count,
             missing_url_count=missing_url_count,
+            attempted_url_count=attempted_urls,
+            observed_price_count=successful,
             successful_observations=successful,
+            blocked_by_policy_count=blocked_by_policy,
+            blocked_by_access_count=blocked_by_access,
             blocked_count=blocked,
             parse_failed_count=parse_failed,
             internal_only_count=internal_only,

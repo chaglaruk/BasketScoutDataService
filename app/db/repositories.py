@@ -210,6 +210,18 @@ class WebPriceWatchlistRepository:
             or 0
         )
 
+    def count_enabled_with_url(self) -> int:
+        return int(
+            self.db.scalar(
+                select(func.count()).select_from(WebPriceWatchlist).where(
+                    WebPriceWatchlist.enabled.is_(True),
+                    WebPriceWatchlist.product_url.is_not(None),
+                    WebPriceWatchlist.product_url != "",
+                )
+            )
+            or 0
+        )
+
     def count_with_url(self) -> int:
         return int(
             self.db.scalar(

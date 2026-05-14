@@ -17,9 +17,14 @@ class ProvidersStatusResponse(BaseModel):
     providers: list[ProviderStatusItem]
     daily_job_last_run_at: str | None = None
     enabled_watchlist_count: int = 0
+    enabled_url_count: int = 0
     configured_url_count: int = 0
     missing_url_count: int = 0
+    attempted_url_count: int = 0
+    observed_price_count: int = 0
     successful_observations: int = 0
+    blocked_by_policy_count: int = 0
+    blocked_by_access_count: int = 0
     blocked_count: int = 0
     parse_failed_count: int = 0
     internal_only_count: int = 0
@@ -38,9 +43,14 @@ def providers_status() -> ProvidersStatusResponse:
         providers=registry.all_statuses(),
         daily_job_last_run_at=snapshot.daily_job_last_run_at,
         enabled_watchlist_count=snapshot.enabled_watchlist_count,
+        enabled_url_count=snapshot.enabled_url_count,
         configured_url_count=snapshot.configured_url_count,
         missing_url_count=snapshot.missing_url_count,
+        attempted_url_count=snapshot.attempted_url_count,
+        observed_price_count=snapshot.observed_price_count,
         successful_observations=snapshot.successful_observations,
+        blocked_by_policy_count=snapshot.blocked_by_policy_count,
+        blocked_by_access_count=snapshot.blocked_by_access_count,
         blocked_count=snapshot.blocked_count,
         parse_failed_count=snapshot.parse_failed_count,
         internal_only_count=snapshot.internal_only_count,
