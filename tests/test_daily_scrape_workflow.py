@@ -1,11 +1,11 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import json
 from pathlib import Path
 
 
 def test_daily_scrape_workflow_has_schedule_and_dispatch():
-    workflow = Path('.github/workflows/daily-scrape.yml').read_text(encoding='utf-8')
+    workflow = Path('.github/workflows/daily_scrape.yml').read_text(encoding='utf-8')
 
     assert 'schedule:' in workflow
     assert "cron: '0 4 * * *'" in workflow
@@ -14,7 +14,7 @@ def test_daily_scrape_workflow_has_schedule_and_dispatch():
 
 
 def test_daily_scrape_workflow_uploads_artifact():
-    workflow = Path('.github/workflows/daily-scrape.yml').read_text(encoding='utf-8')
+    workflow = Path('.github/workflows/daily_scrape.yml').read_text(encoding='utf-8')
 
     assert 'actions/upload-artifact@v4' in workflow
     assert 'data/scraped_prices.json' in workflow

@@ -10,6 +10,10 @@ on:
         type: boolean
         default: true
 
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -27,7 +31,8 @@ jobs:
 
       - name: Bağımlılıkları yükle
         run: |
-          pip install "scrapling[fetchers]"
+          pip install -r requirements.txt
+          pip install "scrapling[fetchers]>=0.4.8"
           python -c "from scrapling.cli import install; install([], standalone_mode=False)"
 
       - name: Sistem bağımlılıkları (Playwright için)
@@ -39,7 +44,7 @@ jobs:
             libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2
 
       - name: Scrape çalıştır (dry-run)
-        if: ${{ github.event.inputs.dry_run == 'true' || github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
         run: |
           python -c "
           from app.providers.scrapling_provider import scrape_retailer
@@ -50,7 +55,7 @@ jobs:
           "
 
       - name: Scrape çalıştır (full)
-        if: ${{ github.event.inputs.dry_run != 'true' && github.event_name == 'schedule' }}
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run) }}
         run: |
           python -c "
           from app.providers.scrapling_provider import run_full_scrape
